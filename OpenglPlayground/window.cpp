@@ -9,6 +9,8 @@
 
 #include "Shader.h"
 #include "stb_image.h"
+#include "Camera.h"
+
 
 using namespace std;
 
@@ -93,6 +95,10 @@ glm::vec3 cubePositions[] = {
 	glm::vec3(-1.3f,  1.0f, -1.5f)
 };
 
+Camera* camera = new Camera();
+
+float deltaTime = 0.0f;
+float lastFrame = 0.0f;
 
 
 
@@ -101,13 +107,70 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 	glViewport(0, 0, width, height);
 }
 
+// When processing input, using delta time to make sure that frame rate won't impact the 
+// distance of movement
+// Higher delta time value means that rendering time between current frame and last frame is longer 
+// (overall frame rate is lower), thus speed will be higher (multiplying by higher value) to balance it out  
+
 void processInput(GLFWwindow* window)
 {
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 	{
 		glfwSetWindowShouldClose(window, true);
 	}
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+	{
+		camera->ProcessKeyboard(FORWARD, deltaTime);
+	}
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+	{
+		camera->ProcessKeyboard(BACKWARD, deltaTime);
+	}
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+	{
+		camera->ProcessKeyboard(LEFT, deltaTime);
+	}
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+	{
+		camera->ProcessKeyboard(RIGHT, deltaTime);
+	}
 }
+
+// mouse movement ----
+
+// initialize the cursor position, they are initialized to be at the center of the screen
+// since the screen resolution is 800 x 600
+float lastX = 400, lastY = 300;
+
+bool firstTimeMouse = true;
+
+void mouse_callback(GLFWwindow* window, double xpos, double ypos)
+{
+	// issue -- the callback is called with the position where the cursor entered the screen from,
+	// that location could be significantly far from the center of the screen resulting in a big jump of view 
+	// solve -- Update initial cursor position to the new position 
+	if (firstTimeMouse)
+	{
+		lastX = xpos;
+		lastY = ypos;
+		firstTimeMouse = false;
+	}
+
+	float xoffset = xpos - lastX;
+	float yoffset = lastY - ypos; // ypos - lastY -> reversed, mouse up -> camera down, mouse down -> camera up
+	lastX = xpos;
+	lastY = ypos;
+	camera->ProcessMouseMovement(xoffset, yoffset);
+}
+
+// ----
+
+// wheel movement ----
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+{
+	camera->ProcessMouseScroll(yoffset);
+}
+// ----
 
 void renderBackgroundWithColor()
 {
@@ -147,7 +210,13 @@ int main()
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
 	// limit frame rate
-	//glfwSwapInterval(2);
+	//glfwSwapInterval(1);
+
+	// capture mouse input and disable cursor so that the cursor always stays at the center of the screen
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
+	glfwSetCursorPosCallback(window, mouse_callback);
+	glfwSetScrollCallback(window, scroll_callback);
 
 	// creating vertex array object
 	unsigned int VAO;
@@ -252,12 +321,9 @@ int main()
 	transform2 = glm::translate(transform2, glm::vec3(-0.5f, 0.5f, 0.0f));*/
 
 
-	glm::mat4 view = glm::mat4(1.0f);
+	//glm::mat4 view = glm::mat4(1.0f);
 	// this has the same visual effect as we move the camera backward, but we are actually moving the scene forward, thus negative z-axis
-	view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
-
-	glm::mat4 projection;
-	projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
+	//view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
 
 
 	glEnable(GL_DEPTH_TEST);
@@ -266,6 +332,10 @@ int main()
 	while (!glfwWindowShouldClose(window))
 	{
 		float time = glfwGetTime();
+
+		float currentFrame = time;
+		deltaTime = currentFrame - lastFrame;
+		lastFrame = currentFrame;
 
 		processInput(window);
 		glClear(GL_DEPTH_BUFFER_BIT);
@@ -285,7 +355,11 @@ int main()
 		shaderObj->setMat4f("transform", 1, false, transform2);*/
 		//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
+		glm::mat4 view;
+		view = camera->GetViewMatrix();
 		shaderObj->setMat4f("view", 1, false, view);
+		glm::mat4 projection;
+		projection = glm::perspective(glm::radians(camera->Zoom), 800.0f / 600.0f, 0.1f, 100.0f);
 		shaderObj->setMat4f("projection", 1, false, projection);
 		for (int i = 0; i < 10; i++)
 		{
