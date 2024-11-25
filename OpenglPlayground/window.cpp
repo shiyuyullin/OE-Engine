@@ -10,18 +10,11 @@
 #include "Shader.h"
 #include "stb_image.h"
 #include "Camera.h"
+#include "Texture.h"
 
 
 using namespace std;
 
-//// vertices for a triangle
-//float vertices[] = {
-//	// positions		// colors
-//	-0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f,
-//	 0.5f, -0.5f, 0.0f,	0.0f, 1.0f, 0.0f,
-//	 0.0f,  0.5f, 0.0f,	0.0f, 0.0f, 1.0f
-//
-//};
 
 //float vertices[] = {
 //	// positions          // colors           // texture coords
@@ -241,8 +234,6 @@ int main()
 	// set vertex attribute pointer, basically how to get all information of each vertex
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
-	/*glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*) (3 * sizeof(float)));
-	glEnableVertexAttribArray(1);*/
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
 
@@ -252,43 +243,14 @@ int main()
 	// let stb flip y axis when loading the image, usually the image's (0,0) is at top of y axis
 	stbi_set_flip_vertically_on_load(true);
 
-	// create wood texture
-	unsigned int wood;
-	glGenTextures(1, &wood);
-	glBindTexture(GL_TEXTURE_2D, wood);
-	// loading wood image
-	int width, height, nrChannels;
-	unsigned char* data = stbi_load("texture/container.jpg", &width, &height, &nrChannels, 0);
+	// creating wood texture
+	Texture woodTexture("texture/container.jpg", GL_RGB);
+	// reference to the texture
+	unsigned int &wood = woodTexture.texture;
 
-	if (data)
-	{
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-		glGenerateMipmap(GL_TEXTURE_2D);
-	}
-	else
-	{
-		cout << "failed to load wood image" << endl;
-	}
-	// free image memory
-	stbi_image_free(data);
+	Texture laughFaceTexture("texture/awesomeface.png", GL_RGBA);
+	unsigned int& laughFace = laughFaceTexture.texture;
 
-	// create laugh face texture
-	unsigned int laughFace;
-	glGenTextures(1, &laughFace);
-	glBindTexture(GL_TEXTURE_2D, laughFace);
-	// load laugh face image
-	unsigned char *laughFaceData = stbi_load("texture/awesomeface.png", &width, &height, &nrChannels, 0);
-	if (laughFaceData)
-	{
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, laughFaceData);
-		glGenerateMipmap(GL_TEXTURE_2D);
-	}
-	else
-	{
-		cout << "failed to load wood image" << endl;
-	}
-	// free image memory
-	stbi_image_free(laughFaceData);
 
 	// set texture warp/filter options
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
@@ -314,17 +276,6 @@ int main()
 
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-	/*glm::mat4 transform = glm::mat4(1.0f);
-	transform = glm::translate(transform, glm::vec3(0.5f, -0.5f, 0.0f));
-
-	glm::mat4 transform2 = glm::mat4(1.0f);
-	transform2 = glm::translate(transform2, glm::vec3(-0.5f, 0.5f, 0.0f));*/
-
-
-	//glm::mat4 view = glm::mat4(1.0f);
-	// this has the same visual effect as we move the camera backward, but we are actually moving the scene forward, thus negative z-axis
-	//view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
-
 
 	glEnable(GL_DEPTH_TEST);
 
@@ -340,20 +291,6 @@ int main()
 		processInput(window);
 		glClear(GL_DEPTH_BUFFER_BIT);
 		renderBackgroundWithColor();
-
-		//model = glm::rotate(model, time * glm::radians(50.0f), glm::vec3(0.5f, 1.0f, 0.0f));
-
-		/*shaderObj->setMat4f("model", 1, false, model);
-		shaderObj->setMat4f("view", 1, false, view);
-		shaderObj->setMat4f("projection", 1, false, projection);*/
-
-		/*transform = glm::rotate(transform, time, glm::vec3(0.0, 0.0, 1.0));
-		shaderObj->setMat4f("transform", 1, false, transform);*/
-		//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-		
-		/*transform2 = glm::rotate(transform2, time, glm::vec3(0.0, 1.0, 0.0));
-		shaderObj->setMat4f("transform", 1, false, transform2);*/
-		//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
 		glm::mat4 view;
 		view = camera->GetViewMatrix();
@@ -371,8 +308,6 @@ int main()
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 
 		}
-
-		//glDrawArrays(GL_TRIANGLES, 0, 36);
 
 		glfwPollEvents();
 		glfwSwapBuffers(window);
