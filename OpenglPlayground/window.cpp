@@ -282,10 +282,26 @@ int main()
 		lightShaderObj.setMat4f("view", 1, false, view);
 		lightShaderObj.setMat4f("projection", 1, false, projection);
 		lightShaderObj.setMat3f("normalMat", 1, false, normalMat);
-		lightShaderObj.setVec3f("objectColor", 1.0f, 0.5f, 0.31f);
-		lightShaderObj.setVec3f("lightColor", 1.0f, 1.0f, 1.0f);
-		lightShaderObj.setVec3fv("lightPosition", 1, lightSourcePosition);
 		lightShaderObj.setVec3fv("cameraPos", 1, camera->Position);
+		lightShaderObj.setVec3f("material.ambient", 0.0f, 0.1f, 0.06f);
+		lightShaderObj.setVec3f("material.diffuse", 0.0f, 0.50980392f, 0.50980392f);
+		lightShaderObj.setVec3f("material.specular", 0.50196078f, 0.50196078f, 0.50196078f);
+		lightShaderObj.setFloat("material.shininess", 0.25f);
+		lightShaderObj.setVec3fv("light.lightPosition", 1, lightSourcePosition);
+		lightShaderObj.setVec3fv("light.ambient", 1, glm::vec3(1.0f));
+		lightShaderObj.setVec3fv("light.diffuse", 1, glm::vec3(1.0f));
+		lightShaderObj.setVec3fv("light.specular", 1, glm::vec3(1.0f));
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+
+		glm::mat4 modelMatRubyCube(1.0f);
+		modelMatRubyCube = glm::translate(modelMatRubyCube, glm::vec3(8.0f, 0.0f, 0.0f));
+		glm::mat4 normalMatRubyCube = glm::transpose(glm::inverse(glm::mat3(modelMatRubyCube)));
+		lightShaderObj.setMat4f("model", 1, false, modelMatRubyCube);
+		lightShaderObj.setMat3f("normalMat", 1, false, normalMatRubyCube);
+		lightShaderObj.setVec3f("material.ambient", 0.175f, 0.01175f, 0.01175f);
+		lightShaderObj.setVec3f("material.diffuse", 0.61424f, 0.04136f, 0.04136f);
+		lightShaderObj.setVec3f("material.specular", 0.727811f, 0.626959f, 0.626959f);
+		lightShaderObj.setFloat("material.shininess", 0.6f);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 
 
@@ -296,6 +312,7 @@ int main()
 		lightSourceShaderObj.setMat4f("model", 1, false, modelForLightSourceShader);
 		lightSourceShaderObj.setMat4f("view", 1, false, view);
 		lightSourceShaderObj.setMat4f("projection", 1, false, projection);
+
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 
 
