@@ -41,12 +41,24 @@
     <ClInclude Include="Texture.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="cube.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="VertexShader.glsl">
       <Filter>Source Files\Shaders</Filter>
     </None>
     <None Include="FragmentShader.glsl">
+      <Filter>Source Files\Shaders</Filter>
+    </None>
+    <None Include="VertexShaderLight.glsl">
+      <Filter>Source Files\Shaders</Filter>
+    </None>
+    <None Include="FragmentShaderLight.glsl">
+      <Filter>Source Files\Shaders</Filter>
+    </None>
+    <None Include="FragmentShaderLightSource.glsl">
       <Filter>Source Files\Shaders</Filter>
     </None>
   </ItemGroup>

@@ -23,6 +23,7 @@ public:
 	void setBool(const string& name, bool value) const;
 	void setInt(const string& name, int value) const;
 	void setFloat(const string& name, float value) const;
+	void setVec3f(const string& name, float v1, float v2, float v3) const;
 	void setVec4f(const string& name, float v1, float v2, float v3, float v4) const;
 	void setMat4f(const string& name, int count, bool transpose, glm::mat4 transform);
 };
@@ -117,6 +118,11 @@ void Shader::setFloat(const string& name, float value) const
 void Shader::setInt(const string& name, int value) const
 {
 	glUniform1i(glGetUniformLocation(ID, name.c_str()), value);
+}
+
+void Shader::setVec3f(const string& name, float v1, float v2, float v3) const
+{
+	glUniform3f(glGetUniformLocation(ID, name.c_str()), v1, v2, v3);
 }
 
 void Shader::setVec4f(const string& name, float v1, float v2, float v3, float v4) const
