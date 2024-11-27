@@ -24,7 +24,9 @@ public:
 	void setInt(const string& name, int value) const;
 	void setFloat(const string& name, float value) const;
 	void setVec3f(const string& name, float v1, float v2, float v3) const;
+	void setVec3fv(const string& name, int count, glm::vec3 vec3);
 	void setVec4f(const string& name, float v1, float v2, float v3, float v4) const;
+	void setMat3f(const string& name, int count, bool transpose, glm::mat3 transform);
 	void setMat4f(const string& name, int count, bool transpose, glm::mat4 transform);
 };
 
@@ -125,9 +127,27 @@ void Shader::setVec3f(const string& name, float v1, float v2, float v3) const
 	glUniform3f(glGetUniformLocation(ID, name.c_str()), v1, v2, v3);
 }
 
+inline void Shader::setVec3fv(const string& name, int count, glm::vec3 vec3)
+{
+	glUniform3fv(glGetUniformLocation(ID, name.c_str()), count, glm::value_ptr(vec3));
+}
+
 void Shader::setVec4f(const string& name, float v1, float v2, float v3, float v4) const
 {
 	glUniform4f(glGetUniformLocation(ID, name.c_str()), v1, v2, v3, v4);
+}
+
+inline void Shader::setMat3f(const string& name, int count, bool transpose, glm::mat3 transform)
+{
+	if (transpose)
+	{
+		glUniformMatrix3fv(glGetUniformLocation(ID, name.c_str()), count, GL_TRUE, glm::value_ptr(transform));
+
+	}
+	else
+	{
+		glUniformMatrix3fv(glGetUniformLocation(ID, name.c_str()), count, GL_FALSE, glm::value_ptr(transform));
+	}
 }
 
 void Shader::setMat4f(const string& name, int count, bool transpose, glm::mat4 transform)

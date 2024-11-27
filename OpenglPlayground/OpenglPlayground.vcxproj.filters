@@ -61,5 +61,8 @@
     <None Include="FragmentShaderLightSource.glsl">
       <Filter>Source Files\Shaders</Filter>
     </None>
+    <None Include="VertexShaderLightSource.glsl">
+      <Filter>Source Files\Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>
