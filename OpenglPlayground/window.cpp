@@ -186,12 +186,14 @@ int main()
 
 	glBindVertexArray(cubeVAO);
 	glBindBuffer(GL_ARRAY_BUFFER, cubeVBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVerticesWithNormalVector), cubeVerticesWithNormalVector, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVerticesWithTexAndNormal), cubeVerticesWithTexAndNormal, GL_STATIC_DRAW);
 
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+	glEnableVertexAttribArray(2);
 
 	// unbind VAO, VBO
 	glBindVertexArray(0);
@@ -207,8 +209,21 @@ int main()
 	// reference to the texture
 	unsigned int &wood = woodTexture.texture;
 
+	// laugh face texture
 	Texture laughFaceTexture("texture/awesomeface.png", GL_RGBA);
 	unsigned int& laughFace = laughFaceTexture.texture;
+
+	// wood steel texture (also called diffuse map when used in lighting)
+	Texture woodSteelTexture("texture/container2.png", GL_RGBA);
+	unsigned int& woodSteel = woodSteelTexture.texture;
+
+	// wood steel specular map (used for lighting)
+	Texture woodSteelSpecularMap("texture/container2_specular.png", GL_RGBA);
+	unsigned int& woodSteelSpecMap = woodSteelSpecularMap.texture;
+
+	// matrix emission map (glowing effect on objects)
+	Texture matrix("texture/matrix.jpg", GL_RGB);
+	unsigned int& matrixEmissionMap = matrix.texture;
 
 
 	// set texture warp/filter options
@@ -216,6 +231,17 @@ int main()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, wood);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, laughFace);
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, woodSteel);
+	glActiveTexture(GL_TEXTURE3);
+	glBindTexture(GL_TEXTURE_2D, woodSteelSpecMap);
+	glActiveTexture(GL_TEXTURE4);
+	glBindTexture(GL_TEXTURE_2D, matrixEmissionMap);
 
 	// creating shaders and shader program
 	Shader plainShaderObj("VertexShader.glsl", "FragmentShader.glsl");
@@ -245,10 +271,6 @@ int main()
 
 		glBindVertexArray(laughFaceCubeVAO);
 		plainShaderObj.use();
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, wood);
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, laughFace);
 
 		plainShaderObj.setInt("wood", 0);
 		plainShaderObj.setInt("laughFace", 1);
@@ -283,9 +305,10 @@ int main()
 		lightShaderObj.setMat4f("projection", 1, false, projection);
 		lightShaderObj.setMat3f("normalMat", 1, false, normalMat);
 		lightShaderObj.setVec3fv("cameraPos", 1, camera->Position);
-		lightShaderObj.setVec3f("material.ambient", 0.0f, 0.1f, 0.06f);
-		lightShaderObj.setVec3f("material.diffuse", 0.0f, 0.50980392f, 0.50980392f);
-		lightShaderObj.setVec3f("material.specular", 0.50196078f, 0.50196078f, 0.50196078f);
+		lightShaderObj.setInt("material.diffuseMap", 2);
+		lightShaderObj.setInt("material.specularMap", 3);
+		lightShaderObj.setInt("useEmissonMap", 1);
+		lightShaderObj.setInt("material.emissionMap", 4);
 		lightShaderObj.setFloat("material.shininess", 0.25f);
 		lightShaderObj.setVec3fv("light.lightPosition", 1, lightSourcePosition);
 		lightShaderObj.setVec3fv("light.ambient", 1, glm::vec3(1.0f));
@@ -298,9 +321,9 @@ int main()
 		glm::mat4 normalMatRubyCube = glm::transpose(glm::inverse(glm::mat3(modelMatRubyCube)));
 		lightShaderObj.setMat4f("model", 1, false, modelMatRubyCube);
 		lightShaderObj.setMat3f("normalMat", 1, false, normalMatRubyCube);
-		lightShaderObj.setVec3f("material.ambient", 0.175f, 0.01175f, 0.01175f);
-		lightShaderObj.setVec3f("material.diffuse", 0.61424f, 0.04136f, 0.04136f);
-		lightShaderObj.setVec3f("material.specular", 0.727811f, 0.626959f, 0.626959f);
+		lightShaderObj.setInt("useEmissonMap", 0);
+		lightShaderObj.setInt("material.diffuseMap", 2);
+		lightShaderObj.setInt("material.specularMap", 3);
 		lightShaderObj.setFloat("material.shininess", 0.6f);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 
