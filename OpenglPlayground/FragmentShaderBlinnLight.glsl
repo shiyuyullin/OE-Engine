@@ -1,4 +1,4 @@
-// Fragment Shader for lighting
+// Fragment shader for blinn-phone lighting
 
 #version 400 core
 
@@ -32,10 +32,9 @@ struct PointLight
 
 };
 
-// if we need to add/remove point light modify NR_POINT_LIGHTs
-#define NR_POINT_LIGHTS 4
+#define NR_POINT_LIGHTS 1
+#define NR_DIRECTIONAL_LIGHTS 1
 
-// NOTE: there is always one directional light
 
 
 vec3 calcDirectionalLight(DirectionalLight dirLight, vec3 normal, vec3 dirToCamera);
@@ -45,7 +44,7 @@ out vec4 FragColor;
   
 uniform vec3 cameraPos;
 uniform Material material;
-uniform DirectionalLight directionalLight;
+uniform DirectionalLight directionalLight[NR_DIRECTIONAL_LIGHTS];
 uniform bool useEmissonMap;
 uniform PointLight pointLights[NR_POINT_LIGHTS];
 
@@ -64,12 +63,22 @@ void main()
 
     vec3 lightingOutput;
     
-    lightingOutput = calcDirectionalLight(directionalLight, normal, dirToCamera);
-
-    for(int i = 0; i < NR_POINT_LIGHTS; i++)
+    if(NR_DIRECTIONAL_LIGHTS != 0) 
     {
-        lightingOutput += calcPointLight(pointLights[i], normal, FragWorldPos, dirToCamera);
+        for(int i = 0; i < NR_DIRECTIONAL_LIGHTS; i++)
+        {
+            lightingOutput += calcDirectionalLight(directionalLight[i], normal, dirToCamera);
+        }
     }
+    
+    if(NR_POINT_LIGHTS != 0)
+    {
+        for(int i = 0; i < NR_POINT_LIGHTS; i++)
+        {
+            lightingOutput += calcPointLight(pointLights[i], normal, FragWorldPos, dirToCamera);
+        }
+    }
+    
 
     FragColor = vec4(lightingOutput, 1.0);
 }
@@ -79,10 +88,12 @@ vec3 calcDirectionalLight(DirectionalLight dirLight, vec3 normal, vec3 dirToCame
 {
     vec3 result;
 
-    vec3 lightDir = normalize(-directionalLight.direction);
+    vec3 lightDir = normalize(-dirLight.direction);
+    vec3 viewDir = normalize(cameraPos - FragWorldPos);
+    vec3 halfwayDir = normalize(lightDir + viewDir);
+
     float diffuseStrength = max(dot(normal, lightDir), 0.0);
-    vec3 reflectDir = reflect(-lightDir, normal);
-    float spec = pow(max(dot(dirToCamera, reflectDir), 0.0), material.shininess);
+    float spec = pow(max(dot(normal, halfwayDir), 0.0), material.shininess);
     
     vec3 ambient = dirLight.ambient * vec3(texture(material.diffuseMap, textureCoord));
     vec3 diffuse = dirLight.diffuse * diffuseStrength * vec3(texture(material.diffuseMap, textureCoord));
@@ -107,9 +118,11 @@ vec3 calcPointLight(PointLight pointLight, vec3 normal, vec3 fragWorldPos, vec3 
     vec3 result;
 
     vec3 lightDir = normalize(pointLight.position - FragWorldPos);
+    vec3 viewDir = normalize(cameraPos - FragWorldPos);
+    vec3 halfwayDir = normalize(lightDir + viewDir);
+
     float diffuseStrength = max(dot(normal, lightDir), 0.0);
-    vec3 reflectDir = reflect(-lightDir, normal);
-    float spec = pow(max(dot(dirToCamera, reflectDir), 0), material.shininess);
+    float spec = pow(max(dot(normal, halfwayDir), 0), material.shininess);
     float distance = length(pointLight.position - FragWorldPos);
     float attenuation = 1.0 / (pointLight.constant + (pointLight.linear * distance) + (pointLight.quadratic * (distance * distance)));
 
