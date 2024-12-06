@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CUSTOMIZEDSHADER_H
+#define CUSTOMIZEDSHADER_H
 
 #include <glad/glad.h>
 #include <glm/glm.hpp>
@@ -17,6 +18,7 @@ public:
 	unsigned int ID;
 
 	Shader(const char* vertexPath, const char* fragmentPath);
+	~Shader();
 	// active the shader
 	void use();
 
@@ -76,7 +78,7 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath)
 		cout << "vertex shader compilcation failed" << endl;
 	}
 	// create and compile fragment shader
-	fragmentShader  = glCreateShader(GL_FRAGMENT_SHADER);
+	fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
 	glShaderSource(fragmentShader, 1, &fShaderCode, NULL);
 	glCompileShader(fragmentShader);
 	// check if fragment shader compiled successfully 
@@ -92,9 +94,9 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath)
 	glLinkProgram(ID);
 	// checkpoint for successful linking of the shader program
 	glGetProgramiv(ID, GL_LINK_STATUS, &success);
-	if(!success)
+	if (!success)
 	{
-		cout << "failed to link shader program" << endl;	
+		cout << "failed to link shader program" << endl;
 	}
 	// delete shaders
 	glDeleteShader(vertexShader);
@@ -162,5 +164,14 @@ void Shader::setMat4f(const string& name, int count, bool transpose, glm::mat4 t
 		glUniformMatrix4fv(glGetUniformLocation(ID, name.c_str()), count, GL_FALSE, glm::value_ptr(transform));
 	}
 }
+
+
+Shader::~Shader()
+{
+
+}
+
+
+#endif // !SHADER_H
 
 

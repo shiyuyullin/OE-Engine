@@ -12,40 +12,15 @@
 #include "Camera.h"
 #include "Texture.h"
 #include "cube.h"
+#include "Scene1.h"
 
 using namespace std;
 
-
-glm::vec3 cubePositions[] = {
-	glm::vec3(0.0f,  0.0f,  0.0f),
-	glm::vec3(2.0f,  5.0f, -15.0f),
-	glm::vec3(-1.5f, -2.2f, -2.5f),
-	glm::vec3(-3.8f, -2.0f, -12.3f),
-	glm::vec3(2.4f, -0.4f, -3.5f),
-	glm::vec3(-1.7f,  3.0f, -7.5f),
-	glm::vec3(1.3f, -2.0f, -2.5f),
-	glm::vec3(1.5f,  2.0f, -2.5f),
-	glm::vec3(1.5f,  0.2f, -1.5f),
-	glm::vec3(-1.3f,  1.0f, -1.5f)
-};
-
-glm::vec3 lightSourcePosition(7.2f, 0.0f, -5.0f);
-float lightSourceMoveRange = 3.0f;
-float lightSourceMoveSpeed = 1.0f;
 
 Camera* camera = new Camera();
 
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
-
-glm::vec3 pointLightPositions[] = {
-	glm::vec3(0.7f,  0.2f,  2.0f),
-	glm::vec3(2.3f, -3.3f, -4.0f),
-	glm::vec3(-4.0f,  2.0f, -12.0f),
-	glm::vec3(0.0f,  0.0f, -3.0f)
-};
-
-
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
@@ -264,12 +239,9 @@ int main()
 
 	Shader blinnLightShaderObj("VertexShaderBlinnLight.glsl", "FragmentShaderBlinnLight.glsl");
 
-
-	glm::mat4 lightProjectMatrix = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 1.0f, 7.5f);
-
-	glm::mat4 lightViewMatrix = glm::lookAt(glm::vec3(-2.0, 4.0, -1.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-
-	glm::mat4 lightSpaceMatrix = lightProjectMatrix * lightViewMatrix;
+	vector<reference_wrapper<Shader>>* shaders = new vector<reference_wrapper<Shader>>({lightShaderObj, blinnLightShaderObj, lightSourceShaderObj});
+	vector<GLuint*>* VAOs = new vector<GLuint*>({ &cubeVAO });
+	Scene1 *scene1 = new Scene1(camera, shaders, VAOs);
 
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
@@ -289,200 +261,7 @@ int main()
 		glClear(GL_DEPTH_BUFFER_BIT);
 		renderBackgroundWithColor();
 
-		glBindVertexArray(cubeVAO);
-
-		lightShaderObj.use();
-		// view and projection matrices are always the same no matter which shader to use
-		glm::mat4 view;
-		view = camera->GetViewMatrix();
-		glm::mat4 projection;
-		projection = glm::perspective(glm::radians(camera->Zoom), 800.0f / 600.0f, 0.1f, 100.0f);
-
-		lightShaderObj.setMat4f("view", 1, false, view);
-		lightShaderObj.setMat4f("projection", 1, false, projection);
-		lightShaderObj.setVec3fv("cameraPos", 1, camera->Position);
-		lightShaderObj.setInt("material.diffuseMap", 2);
-		lightShaderObj.setInt("material.specularMap", 3);
-		lightShaderObj.setFloat("material.shininess", 32.0f);
-		lightShaderObj.setInt("useEmissonMap", 0);
-		lightShaderObj.setInt("material.emissionMap", 4);
-		// directional light
-		lightShaderObj.setVec3fv("directionalLight.direction", 1, glm::vec3(-0.2f, -1.0f, -0.3f));
-		lightShaderObj.setVec3fv("directionalLight.ambient", 1, glm::vec3(0.05f, 0.05f, 0.05f));
-		lightShaderObj.setVec3fv("directionalLight.diffuse", 1, glm::vec3(0.4f, 0.4f, 0.4f));
-		lightShaderObj.setVec3fv("directionalLight.specular", 1, glm::vec3(0.5f, 0.5f, 0.5f));
-		// point light 0
-		lightShaderObj.setVec3fv("pointLights[0].position", 1, pointLightPositions[0]);
-		lightShaderObj.setVec3fv("pointLights[0].ambient", 1, glm::vec3(0.05f, 0.05f, 0.05f));
-		lightShaderObj.setVec3fv("pointLights[0].diffuse", 1, glm::vec3(0.8f, 0.8f, 0.8f));
-		lightShaderObj.setVec3fv("pointLights[0].specular", 1, glm::vec3(1.0f));
-		lightShaderObj.setFloat("pointLights[0].constant", 1.0f);
-		lightShaderObj.setFloat("pointLights[0].linear", 0.09f);
-		lightShaderObj.setFloat("pointLights[0].quadratic", 0.032f);
-		// point light 1
-		lightShaderObj.setVec3fv("pointLights[1].position", 1, pointLightPositions[1]);
-		lightShaderObj.setVec3fv("pointLights[1].ambient", 1, glm::vec3(0.05f, 0.05f, 0.05f));
-		lightShaderObj.setVec3fv("pointLights[1].diffuse", 1, glm::vec3(0.8f, 0.8f, 0.8f));
-		lightShaderObj.setVec3fv("pointLights[1].specular", 1, glm::vec3(1.0f));
-		lightShaderObj.setFloat("pointLights[1].constant", 1.0f);
-		lightShaderObj.setFloat("pointLights[1].linear", 0.09f);
-		lightShaderObj.setFloat("pointLights[1].quadratic", 0.032f);
-		// point light 2
-		lightShaderObj.setVec3fv("pointLights[2].position", 1, pointLightPositions[2]);
-		lightShaderObj.setVec3fv("pointLights[2].ambient", 1, glm::vec3(0.05f, 0.05f, 0.05f));
-		lightShaderObj.setVec3fv("pointLights[2].diffuse", 1, glm::vec3(0.8f, 0.8f, 0.8f));
-		lightShaderObj.setVec3fv("pointLights[2].specular", 1, glm::vec3(1.0f));
-		lightShaderObj.setFloat("pointLights[2].constant", 1.0f);
-		lightShaderObj.setFloat("pointLights[2].linear", 0.09f);
-		lightShaderObj.setFloat("pointLights[2].quadratic", 0.032f);
-		// point light 3 
-		lightShaderObj.setVec3fv("pointLights[3].position", 1, pointLightPositions[3]);
-		lightShaderObj.setVec3fv("pointLights[3].ambient", 1, glm::vec3(0.05f, 0.05f, 0.05f));
-		lightShaderObj.setVec3fv("pointLights[3].diffuse", 1, glm::vec3(0.8f, 0.8f, 0.8f));
-		lightShaderObj.setVec3fv("pointLights[3].specular", 1, glm::vec3(1.0f));
-		lightShaderObj.setFloat("pointLights[3].constant", 1.0f);
-		lightShaderObj.setFloat("pointLights[3].linear", 0.09f);
-		lightShaderObj.setFloat("pointLights[3].quadratic", 0.032f);
-
-		for (int i = 0; i < 10; i++)
-		{
-			glm::mat4 model = glm::mat4(1.0f);
-			model = glm::translate(model, cubePositions[i]);
-			float angle = 20.0f * i;
-			model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
-			lightShaderObj.setMat4f("model", 1, false, model);
-			glm::mat3 normalMat = glm::transpose(glm::inverse(glm::mat3(model)));
-			lightShaderObj.setMat3f("normalMat", 1, false, normalMat);
-			glDrawArrays(GL_TRIANGLES, 0, 36);
-		}
-
-		// lighting with blinn-phong
-		glBindVertexArray(cubeVAO);
-		blinnLightShaderObj.use();
-		blinnLightShaderObj.setMat4f("view", 1, false, view);
-		blinnLightShaderObj.setMat4f("projection", 1, false, projection);
-		blinnLightShaderObj.setVec3fv("cameraPos", 1, camera->Position);
-		blinnLightShaderObj.setInt("material.diffuseMap", 5);
-		blinnLightShaderObj.setInt("material.specularMap", 5);
-		blinnLightShaderObj.setFloat("material.shininess", 4.0f);
-		blinnLightShaderObj.setInt("useEmissonMap", 0);
-		blinnLightShaderObj.setInt("material.emissionMap", 4);
-		// model matrix
-		glm::mat4 modelMatrix = glm::mat4(1.0f);
-		modelMatrix = glm::translate(modelMatrix, glm::vec3(17.0f, 0.0f, 0.0f));
-		modelMatrix = glm::scale(modelMatrix, glm::vec3(6.0f, 0.5f, 6.0f));
-		glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(modelMatrix)));
-		blinnLightShaderObj.setMat4f("model", 1, false, modelMatrix);
-		blinnLightShaderObj.setMat3f("normalMat", 1, false, normalMatrix);
-		// directional light
-		blinnLightShaderObj.setVec3fv("directionalLight[0].direction", 1, glm::vec3(-0.2f, -1.0f, -0.3f));
-		blinnLightShaderObj.setVec3fv("directionalLight[0].ambient", 1, glm::vec3(0.05f, 0.05f, 0.05f));
-		blinnLightShaderObj.setVec3fv("directionalLight[0].diffuse", 1, glm::vec3(0.4f, 0.4f, 0.4f));
-		blinnLightShaderObj.setVec3fv("directionalLight[0].specular", 1, glm::vec3(0.5f, 0.5f, 0.5f));
-		// point light
-		blinnLightShaderObj.setVec3fv("pointLights[0].position", 1, glm::vec3(17.0f, 1.0f, 0.0f));
-		blinnLightShaderObj.setVec3fv("pointLights[0].ambient", 1, glm::vec3(0.05f, 0.05f, 0.05f));
-		blinnLightShaderObj.setVec3fv("pointLights[0].diffuse", 1, glm::vec3(0.8f, 0.8f, 0.8f));
-		blinnLightShaderObj.setVec3fv("pointLights[0].specular", 1, glm::vec3(1.0f));
-		blinnLightShaderObj.setFloat("pointLights[0].constant", 1.0f);
-		blinnLightShaderObj.setFloat("pointLights[0].linear", 0.09f);
-		blinnLightShaderObj.setFloat("pointLights[0].quadratic", 0.032f);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
-
-		glBindVertexArray(cubeVAO);
-		lightShaderObj.use();
-		lightShaderObj.setMat4f("view", 1, false, view);
-		lightShaderObj.setMat4f("projection", 1, false, projection);
-		lightShaderObj.setVec3fv("cameraPos", 1, camera->Position);
-		lightShaderObj.setInt("material.diffuseMap", 5);
-		lightShaderObj.setInt("material.specularMap", 5);
-		lightShaderObj.setFloat("material.shininess", 4.0f);
-		lightShaderObj.setInt("useEmissonMap", 0);
-		lightShaderObj.setInt("material.emissionMap", 4);
-		// model matrix
-		modelMatrix = glm::mat4(1.0f);
-		modelMatrix = glm::translate(modelMatrix, glm::vec3(8.0f, 0.0f, 0.0f));
-		modelMatrix = glm::scale(modelMatrix, glm::vec3(6.0f, 0.5f, 6.0f));
-		normalMatrix = glm::transpose(glm::inverse(glm::mat3(modelMatrix)));
-		lightShaderObj.setMat4f("model", 1, false, modelMatrix);
-		lightShaderObj.setMat3f("normalMat", 1, false, normalMatrix);
-		// directional light
-		lightShaderObj.setVec3fv("directionalLight.direction", 1, glm::vec3(-0.2f, -1.0f, -0.3f));
-		lightShaderObj.setVec3fv("directionalLight.ambient", 1, glm::vec3(0.05f, 0.05f, 0.05f));
-		lightShaderObj.setVec3fv("directionalLight.diffuse", 1, glm::vec3(0.4f, 0.4f, 0.4f));
-		lightShaderObj.setVec3fv("directionalLight.specular", 1, glm::vec3(0.5f, 0.5f, 0.5f));
-		// point light
-		lightShaderObj.setVec3fv("pointLights[0].position", 1, glm::vec3(8.0f, 1.0f, 0.0f));
-		lightShaderObj.setVec3fv("pointLights[0].ambient", 1, glm::vec3(0.05f, 0.05f, 0.05f));
-		lightShaderObj.setVec3fv("pointLights[0].diffuse", 1, glm::vec3(0.8f, 0.8f, 0.8f));
-		lightShaderObj.setVec3fv("pointLights[0].specular", 1, glm::vec3(1.0f));
-		lightShaderObj.setFloat("pointLights[0].constant", 1.0f);
-		lightShaderObj.setFloat("pointLights[0].linear", 0.09f);
-		lightShaderObj.setFloat("pointLights[0].quadratic", 0.032f);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
-
-
-		// light source bouces in the range 
-		lightSourcePosition.x = 6.2f + (lightSourceMoveRange * sin(lightSourceMoveSpeed * time));
-
-		// light source 
-		lightSourceShaderObj.use();
-		glm::mat4 modelForLightSourceShader = glm::mat4(1.0f);
-		modelForLightSourceShader = glm::translate(modelForLightSourceShader, lightSourcePosition);
-		modelForLightSourceShader = glm::scale(modelForLightSourceShader, glm::vec3(0.5f, 0.5f, 0.5f));
-		lightSourceShaderObj.setMat4f("model", 1, false, modelForLightSourceShader);
-		lightSourceShaderObj.setMat4f("view", 1, false, view);
-		lightSourceShaderObj.setMat4f("projection", 1, false, projection);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
-
-		modelForLightSourceShader = glm::mat4(1.0f);
-		modelForLightSourceShader = glm::translate(modelForLightSourceShader, pointLightPositions[0]);
-		modelForLightSourceShader = glm::scale(modelForLightSourceShader, glm::vec3(0.3f, 0.3f, 0.3f));
-		lightSourceShaderObj.setMat4f("model", 1, false, modelForLightSourceShader);
-		lightSourceShaderObj.setMat4f("view", 1, false, view);
-		lightSourceShaderObj.setMat4f("projection", 1, false, projection);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
-
-		modelForLightSourceShader = glm::mat4(1.0f);
-		modelForLightSourceShader = glm::translate(modelForLightSourceShader, pointLightPositions[1]);
-		modelForLightSourceShader = glm::scale(modelForLightSourceShader, glm::vec3(0.3f, 0.3f, 0.3f));
-		lightSourceShaderObj.setMat4f("model", 1, false, modelForLightSourceShader);
-		lightSourceShaderObj.setMat4f("view", 1, false, view);
-		lightSourceShaderObj.setMat4f("projection", 1, false, projection);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
-
-		modelForLightSourceShader = glm::mat4(1.0f);
-		modelForLightSourceShader = glm::translate(modelForLightSourceShader, pointLightPositions[2]);
-		modelForLightSourceShader = glm::scale(modelForLightSourceShader, glm::vec3(0.3f, 0.3f, 0.3f));
-		lightSourceShaderObj.setMat4f("model", 1, false, modelForLightSourceShader);
-		lightSourceShaderObj.setMat4f("view", 1, false, view);
-		lightSourceShaderObj.setMat4f("projection", 1, false, projection);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
-
-		modelForLightSourceShader = glm::mat4(1.0f);
-		modelForLightSourceShader = glm::translate(modelForLightSourceShader, pointLightPositions[3]);
-		modelForLightSourceShader = glm::scale(modelForLightSourceShader, glm::vec3(0.3f, 0.3f, 0.3f));
-		lightSourceShaderObj.setMat4f("model", 1, false, modelForLightSourceShader);
-		lightSourceShaderObj.setMat4f("view", 1, false, view);
-		lightSourceShaderObj.setMat4f("projection", 1, false, projection);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
-
-		modelForLightSourceShader = glm::mat4(1.0f);
-		modelForLightSourceShader = glm::translate(modelForLightSourceShader, glm::vec3(8.0f, 1.0f, 0.0f));
-		modelForLightSourceShader = glm::scale(modelForLightSourceShader, glm::vec3(0.3f, 0.3f, 0.3f));
-		lightSourceShaderObj.setMat4f("model", 1, false, modelForLightSourceShader);
-		lightSourceShaderObj.setMat4f("view", 1, false, view);
-		lightSourceShaderObj.setMat4f("projection", 1, false, projection);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
-
-		modelForLightSourceShader = glm::mat4(1.0f);
-		modelForLightSourceShader = glm::translate(modelForLightSourceShader, glm::vec3(17.0f, 1.0f, 0.0f));
-		modelForLightSourceShader = glm::scale(modelForLightSourceShader, glm::vec3(0.3f, 0.3f, 0.3f));
-		lightSourceShaderObj.setMat4f("model", 1, false, modelForLightSourceShader);
-		lightSourceShaderObj.setMat4f("view", 1, false, view);
-		lightSourceShaderObj.setMat4f("projection", 1, false, projection);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
-
+		scene1->render();		
 
 		glfwPollEvents();
 		glfwSwapBuffers(window);
@@ -494,5 +273,4 @@ int main()
 
 
 }
-
 
