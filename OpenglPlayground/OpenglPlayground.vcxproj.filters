@@ -79,11 +79,5 @@
     <None Include="VertexShaderBlinnLight.glsl">
       <Filter>Source Files\Shaders</Filter>
     </None>
-    <None Include="VertexShaderDepthMap.glsl">
-      <Filter>Source Files\Shaders</Filter>
-    </None>
-    <None Include="FragmentShaderDepthMap.glsl">
-      <Filter>Source Files\Shaders</Filter>
-    </None>
   </ItemGroup>
 </Project>

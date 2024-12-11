@@ -161,7 +161,6 @@ int main()
 	glBindVertexArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-
 	unsigned int cubeVAO, cubeVBO;
 	glGenVertexArrays(1, &cubeVAO);
 	glGenBuffers(1, &cubeVBO);
@@ -180,7 +179,6 @@ int main()
 	// unbind VAO, VBO
 	glBindVertexArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
 
 
 	// let stb flip y axis when loading the image, usually the image's (0,0) is at top of y axis
@@ -207,9 +205,10 @@ int main()
 	Texture matrix("texture/matrix.jpg", GL_RGB);
 	unsigned int& matrixEmissionMap = matrix.texture;
 
-	// wood texture
+	// brickwall texture
 	Texture brickWallTexture("texture/brickwall.jpg", GL_RGB);
 	unsigned int& brickWall = brickWallTexture.texture;
+
 
 	// set texture warp/filter options
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
@@ -217,6 +216,7 @@ int main()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
+	// activiate textures, assign indices to them
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, wood);
 	glActiveTexture(GL_TEXTURE1);
@@ -230,6 +230,7 @@ int main()
 	glActiveTexture(GL_TEXTURE5);
 	glBindTexture(GL_TEXTURE_2D, brickWall);
 
+
 	// creating shaders and shader program
 	Shader plainShaderObj("VertexShader.glsl", "FragmentShader.glsl");
 
@@ -239,9 +240,11 @@ int main()
 
 	Shader blinnLightShaderObj("VertexShaderBlinnLight.glsl", "FragmentShaderBlinnLight.glsl");
 
+	// initialize scene 1
 	vector<reference_wrapper<Shader>>* shaders = new vector<reference_wrapper<Shader>>({lightShaderObj, blinnLightShaderObj, lightSourceShaderObj});
 	vector<GLuint*>* VAOs = new vector<GLuint*>({ &cubeVAO });
 	Scene1 *scene1 = new Scene1(camera, shaders, VAOs);
+
 
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
@@ -261,7 +264,9 @@ int main()
 		glClear(GL_DEPTH_BUFFER_BIT);
 		renderBackgroundWithColor();
 
-		scene1->render();		
+		scene1->render();
+
+
 
 		glfwPollEvents();
 		glfwSwapBuffers(window);
