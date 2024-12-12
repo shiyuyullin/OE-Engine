@@ -167,6 +167,18 @@ void Scene1::render()
 	blinnLightShaderObj.setMat3f("normalMat", 1, false, normalMatrix);
 	glDrawArrays(GL_TRIANGLES, 0, 36);
 
+	//emission map
+	lightShaderObj.setInt("material.diffuseMap", 2);
+	lightShaderObj.setInt("material.specularMap", 3);
+	blinnLightShaderObj.setInt("useEmissonMap", 1);
+	blinnLightShaderObj.setFloat("material.emissionBrightness", sin(0.85 * time));
+	modelMatrix = glm::mat4(1.0f);
+	modelMatrix = glm::translate(modelMatrix, glm::vec3(-5.0f, 1.5f, 0.0f));
+	normalMatrix = glm::transpose(glm::inverse(glm::mat3(modelMatrix)));
+	blinnLightShaderObj.setMat4f("model", 1, false, modelMatrix);
+	blinnLightShaderObj.setMat3f("normalMat", 1, false, normalMatrix);
+	glDrawArrays(GL_TRIANGLES, 0, 36);
+
 
 
 	lightShaderObj.use();
@@ -199,6 +211,7 @@ void Scene1::render()
 	lightShaderObj.setFloat("pointLights[0].linear", 0.09f);
 	lightShaderObj.setFloat("pointLights[0].quadratic", 0.032f);
 	glDrawArrays(GL_TRIANGLES, 0, 36);
+
 
 
 	// light source bouces in the range 

@@ -149,16 +149,12 @@
   <ItemGroup>
     <None Include="FragmentShader.glsl" />
     <None Include="FragmentShaderBlinnLight.glsl" />
-    <None Include="FragmentShaderDepthMap.glsl" />
     <None Include="FragmentShaderLight.glsl" />
     <None Include="FragmentShaderLightSource.glsl" />
-    <None Include="FragmentShaderShadow.glsl" />
     <None Include="VertexShader.glsl" />
     <None Include="VertexShaderBlinnLight.glsl" />
-    <None Include="VertexShaderDepthMap.glsl" />
     <None Include="VertexShaderLight.glsl" />
     <None Include="VertexShaderLightSource.glsl" />
-    <None Include="VertexShaderShadow.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

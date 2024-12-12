@@ -8,6 +8,7 @@ struct Material
     sampler2D specularMap;
     sampler2D emissionMap;
     float shininess;
+    float emissionBrightness;
 
 };
 
@@ -102,7 +103,7 @@ vec3 calcDirectionalLight(DirectionalLight dirLight, vec3 normal, vec3 dirToCame
     if(useEmissonMap)
     {
         vec3 emission = vec3(texture(material.emissionMap, textureCoord));
-        result = ambient + diffuse + specular + emission;
+        result = ambient + diffuse + specular + (emission * material.emissionBrightness);
     }
     else
     {
@@ -136,7 +137,7 @@ vec3 calcPointLight(PointLight pointLight, vec3 normal, vec3 fragWorldPos, vec3 
     if(useEmissonMap)
     {
         vec3 emission = vec3(texture(material.emissionMap, textureCoord));
-        result = ambient + diffuse + specular + emission;
+        result = ambient + diffuse + specular + (emission * material.emissionBrightness);
     }
     else
     {
