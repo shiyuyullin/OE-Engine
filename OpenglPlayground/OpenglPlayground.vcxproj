@@ -141,6 +141,7 @@
     <ClInclude Include="cube.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Scene1.h" />
+    <ClInclude Include="Scene2.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="Texture.h" />
@@ -148,12 +149,16 @@
   <ItemGroup>
     <None Include="FragmentShader.glsl" />
     <None Include="FragmentShaderBlinnLight.glsl" />
+    <None Include="FragmentShaderDepthMap.glsl" />
     <None Include="FragmentShaderLight.glsl" />
     <None Include="FragmentShaderLightSource.glsl" />
+    <None Include="FragmentShaderShadow.glsl" />
     <None Include="VertexShader.glsl" />
     <None Include="VertexShaderBlinnLight.glsl" />
+    <None Include="VertexShaderDepthMap.glsl" />
     <None Include="VertexShaderLight.glsl" />
     <None Include="VertexShaderLightSource.glsl" />
+    <None Include="VertexShaderShadow.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

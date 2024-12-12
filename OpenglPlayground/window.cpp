@@ -13,6 +13,7 @@
 #include "Texture.h"
 #include "cube.h"
 #include "Scene1.h"
+#include "Scene2.h"
 
 using namespace std;
 
@@ -240,10 +241,19 @@ int main()
 
 	Shader blinnLightShaderObj("VertexShaderBlinnLight.glsl", "FragmentShaderBlinnLight.glsl");
 
+	Shader depthMapShaders("VertexShaderDepthMap.glsl", "FragmentShaderDepthMap.glsl");
+
+	Shader shadowShaders("VertexShaderShadow.glsl", "FragmentShaderShadow.glsl");
+
 	// initialize scene 1
 	vector<reference_wrapper<Shader>>* shaders = new vector<reference_wrapper<Shader>>({lightShaderObj, blinnLightShaderObj, lightSourceShaderObj});
 	vector<GLuint*>* VAOs = new vector<GLuint*>({ &cubeVAO });
 	Scene1 *scene1 = new Scene1(camera, shaders, VAOs);
+
+
+	/*vector<reference_wrapper<Shader>>* shaders = new vector<reference_wrapper<Shader>>({ shadowShaders, depthMapShaders });
+	vector<GLuint*>* VAOs = new vector<GLuint*>({ &cubeVAO });
+	Scene2* scene2 = new Scene2(camera, shaders, VAOs);*/
 
 
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -265,7 +275,7 @@ int main()
 		renderBackgroundWithColor();
 
 		scene1->render();
-
+		//scene2->render();
 
 
 		glfwPollEvents();

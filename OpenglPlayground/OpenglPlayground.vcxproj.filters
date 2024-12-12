@@ -53,6 +53,9 @@
     <ClInclude Include="Scene1.h">
       <Filter>Source Files\Scenes</Filter>
     </ClInclude>
+    <ClInclude Include="Scene2.h">
+      <Filter>Source Files\Scenes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="VertexShader.glsl">
@@ -79,5 +82,9 @@
     <None Include="VertexShaderBlinnLight.glsl">
       <Filter>Source Files\Shaders</Filter>
     </None>
+    <None Include="VertexShaderDepthMap.glsl" />
+    <None Include="FragmentShaderDepthMap.glsl" />
+    <None Include="VertexShaderShadow.glsl" />
+    <None Include="FragmentShaderShadow.glsl" />
   </ItemGroup>
 </Project>
