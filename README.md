@@ -14,4 +14,10 @@ Lighting (Phong Model): \
 ![Recording 2024-12-11 232846](https://github.com/user-attachments/assets/dcc53d3a-503a-4de6-a3f5-d9fc626145f2)
 \
 \
+\
+Visualize Depth Buffer\
+\
+![Recording 2024-12-16 191813](https://github.com/user-attachments/assets/6d4b4ee1-ebd8-4c75-a848-bb07268ee0e9)
+\
+\
 First person camera to explore the scene :)
