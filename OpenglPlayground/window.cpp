@@ -269,8 +269,8 @@ int main()
 		glClear(GL_DEPTH_BUFFER_BIT);
 		renderBackgroundWithColor();
 
-		//scene1->render();
-		scene1->renderDepthBuffer();
+		scene1->render();
+		//scene1->renderDepthBuffer();
 
 
 		glfwPollEvents();
