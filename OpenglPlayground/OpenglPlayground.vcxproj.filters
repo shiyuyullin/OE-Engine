@@ -82,5 +82,11 @@
     <None Include="VertexShaderBlinnLight.glsl">
       <Filter>Source Files\Shaders</Filter>
     </None>
+    <None Include="FragmentShaderZBuffer.glsl">
+      <Filter>Source Files\Shaders</Filter>
+    </None>
+    <None Include="VertexShaderZBuffer.glsl">
+      <Filter>Source Files\Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

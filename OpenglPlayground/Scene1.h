@@ -9,6 +9,7 @@ public:
 	Scene1(Camera* canera, vector<reference_wrapper<Shader>>* shaders, vector<GLuint*>* VAOs);
 	~Scene1();
 	void render();
+	void renderDepthBuffer();
 private:
 	vector<GLuint*>* VAOs;
 	glm::vec3 pointLightPositions[4];
@@ -51,6 +52,32 @@ Scene1::Scene1(Camera* camera, vector<reference_wrapper<Shader>>* shaders, vecto
 
 Scene1 ::~Scene1()
 {
+}
+
+void Scene1::renderDepthBuffer()
+{
+	Shader& zBufferShader = shaders->at(3);
+
+	glBindVertexArray(*VAOs->at(0));
+
+	zBufferShader.use();
+
+	glm::mat4 view;
+	view = camera->GetViewMatrix();
+	glm::mat4 projection;
+	projection = glm::perspective(glm::radians(camera->Zoom), 800.0f / 600.0f, 0.1f, 100.0f);
+
+	zBufferShader.setMat4f("view", 1, false, view);
+	zBufferShader.setMat4f("projection", 1, false, projection);
+	for (int i = 0; i < 10; i++)
+	{
+		glm::mat4 model = glm::mat4(1.0f);
+		model = glm::translate(model, cubePositions[i]);
+		float angle = 20.0f * i;
+		model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+		zBufferShader.setMat4f("model", 1, false, model);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+	}
 }
 
 void Scene1::render()

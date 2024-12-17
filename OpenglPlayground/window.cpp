@@ -241,9 +241,11 @@ int main()
 
 	Shader blinnLightShaderObj("VertexShaderBlinnLight.glsl", "FragmentShaderBlinnLight.glsl");
 
+	Shader zBufferShader("VertexShaderZBuffer.glsl", "FragmentShaderZBuffer.glsl");
+
 
 	// initialize scene 1
-	vector<reference_wrapper<Shader>>* shaders = new vector<reference_wrapper<Shader>>({lightShaderObj, blinnLightShaderObj, lightSourceShaderObj});
+	vector<reference_wrapper<Shader>>* shaders = new vector<reference_wrapper<Shader>>({lightShaderObj, blinnLightShaderObj, lightSourceShaderObj, zBufferShader});
 	vector<GLuint*>* VAOs = new vector<GLuint*>({ &cubeVAO });
 	Scene1 *scene1 = new Scene1(camera, shaders, VAOs);
 
@@ -267,7 +269,8 @@ int main()
 		glClear(GL_DEPTH_BUFFER_BIT);
 		renderBackgroundWithColor();
 
-		scene1->render();
+		//scene1->render();
+		scene1->renderDepthBuffer();
 
 
 		glfwPollEvents();
