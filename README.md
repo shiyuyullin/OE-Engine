@@ -15,7 +15,7 @@ Lighting (Phong Model): \
 \
 \
 \
-Visualize Depth Buffer\
+Visualize Depth Buffer: (Object further away will appear brighter)\
 \
 ![Recording 2024-12-16 191813](https://github.com/user-attachments/assets/6d4b4ee1-ebd8-4c75-a848-bb07268ee0e9)
 \
