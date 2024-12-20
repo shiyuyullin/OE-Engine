@@ -295,10 +295,10 @@ int main()
 		//scene1->drawPlane();
 		//scene1->render();
 		//scene1->renderDepthBuffer();
-		//scene1->renderOutlining();
+		scene1->renderOutlining();
 
-		scene2->drawPlane();
-		scene2->render();
+		//scene2->drawPlane();
+		//scene2->render();
 
 
 		glfwPollEvents();
