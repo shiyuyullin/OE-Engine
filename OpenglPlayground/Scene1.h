@@ -95,6 +95,7 @@ void Scene1::renderOutlining()
 
 	// all fragments will pass stencil test
 	glStencilFunc(GL_ALWAYS, 1, 0xFF);
+	// enable writing to stencil buffer
 	glStencilMask(0xFF);
 	zBufferShader.use();
 	glm::mat4 view;
@@ -112,8 +113,9 @@ void Scene1::renderOutlining()
 		zBufferShader.setMat4f("model", 1, false, model);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 	}
-
+	// a fragment passes stencil test if its value in stencil buffer if not eqaul to 1
 	glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+	// disable writing to stencil buffer
 	glStencilMask(0x00);
 	glDisable(GL_DEPTH_TEST);
 	stencilShader.use();
@@ -251,8 +253,8 @@ void Scene1::render()
 	glDrawArrays(GL_TRIANGLES, 0, 36);
 
 	//emission map
-	lightShaderObj.setInt("material.diffuseMap", 2);
-	lightShaderObj.setInt("material.specularMap", 3);
+	blinnLightShaderObj.setInt("material.diffuseMap", 2);
+	blinnLightShaderObj.setInt("material.specularMap", 3);
 	blinnLightShaderObj.setInt("useEmissonMap", 1);
 	blinnLightShaderObj.setFloat("material.emissionBrightness", sin(0.85 * time));
 	modelMatrix = glm::mat4(1.0f);
