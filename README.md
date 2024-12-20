@@ -28,6 +28,5 @@ Blending and Transparency:\
 Object outlining with Stencil test/buffer:\
 ![Recording 2024-12-20 171409](https://github.com/user-attachments/assets/e50aafab-58b2-4427-b341-154363f83f3e)
 \
-\
 
 First person camera to explore the scene :)
