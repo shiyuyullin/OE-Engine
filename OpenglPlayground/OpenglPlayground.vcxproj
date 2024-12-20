@@ -139,6 +139,7 @@
   <ItemGroup>
     <ClInclude Include="Camera.h" />
     <ClInclude Include="cube.h" />
+    <ClInclude Include="plane.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Scene1.h" />
     <ClInclude Include="Scene2.h" />
@@ -147,13 +148,13 @@
     <ClInclude Include="Texture.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="FragmentShader.glsl" />
+    <None Include="FragmentShaderDefault.glsl" />
     <None Include="FragmentShaderBlinnLight.glsl" />
     <None Include="FragmentShaderLight.glsl" />
     <None Include="FragmentShaderLightSource.glsl" />
     <None Include="FragmentShaderStencil.glsl" />
     <None Include="FragmentShaderZBuffer.glsl" />
-    <None Include="VertexShader.glsl" />
+    <None Include="VertexShaderDefault.glsl" />
     <None Include="VertexShaderBlinnLight.glsl" />
     <None Include="VertexShaderLight.glsl" />
     <None Include="VertexShaderLightSource.glsl" />

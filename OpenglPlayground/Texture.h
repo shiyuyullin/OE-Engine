@@ -12,12 +12,12 @@ class Texture
 {
 public:
 	unsigned int texture;
-	Texture(string path, GLenum format);
+	Texture(string path, GLint internalFormat, GLenum format);
 	~Texture();
 };
 
 
-Texture::Texture(string path, GLenum format)
+Texture::Texture(string path, GLint internalFormat, GLenum format)
 {
 	glGenTextures(1, &texture);
 	glBindTexture(GL_TEXTURE_2D, texture);
@@ -25,7 +25,7 @@ Texture::Texture(string path, GLenum format)
 	unsigned char* image = stbi_load(path.c_str(), &width, &height, &nrChannels, 0);
 	if (image)
 	{
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, format, GL_UNSIGNED_BYTE, image);
+		glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, GL_UNSIGNED_BYTE, image);
 		glGenerateMipmap(GL_TEXTURE_2D);
 	}
 	else

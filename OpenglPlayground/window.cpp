@@ -12,6 +12,7 @@
 #include "Camera.h"
 #include "Texture.h"
 #include "cube.h"
+#include "plane.h"
 #include "Scene1.h"
 #include "Scene2.h"
 
@@ -142,16 +143,12 @@ int main()
 	// creating vertex array object
 	unsigned int laughFaceCubeVAO;
 	glGenVertexArrays(1, &laughFaceCubeVAO);
-
 	// creating vertex buffer
 	unsigned int laughFaceCubeVBO;
 	glGenBuffers(1, &laughFaceCubeVBO);
-
 	glBindVertexArray(laughFaceCubeVAO);
-
 	glBindBuffer(GL_ARRAY_BUFFER, laughFaceCubeVBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVerticesWithTexCoord), cubeVerticesWithTexCoord, GL_STATIC_DRAW);
-
 	// set vertex attribute pointer, basically how to get all information of each vertex
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
@@ -165,11 +162,9 @@ int main()
 	unsigned int cubeVAO, cubeVBO;
 	glGenVertexArrays(1, &cubeVAO);
 	glGenBuffers(1, &cubeVBO);
-
 	glBindVertexArray(cubeVAO);
 	glBindBuffer(GL_ARRAY_BUFFER, cubeVBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVerticesWithTexAndNormal), cubeVerticesWithTexAndNormal, GL_STATIC_DRAW);
-
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
@@ -181,34 +176,57 @@ int main()
 	glBindVertexArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
+	// plane VAO, VBO
+	unsigned int planeVAO, planeVBO;
+	glGenVertexArrays(1, &planeVAO);
+	glGenBuffers(1, &planeVBO);
+	glBindVertexArray(planeVAO);
+	glBindBuffer(GL_ARRAY_BUFFER, planeVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(planeVertices), planeVertices, GL_STATIC_DRAW);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+	glEnableVertexAttribArray(2);
+	glBindVertexArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	// let stb flip y axis when loading the image, usually the image's (0,0) is at top of y axis
 	stbi_set_flip_vertically_on_load(true);
 
 	// creating wood texture
-	Texture woodTexture("texture/container.jpg", GL_RGB);
+	Texture woodTexture("texture/container.jpg", GL_RGB, GL_RGB);
 	// reference to the texture
 	unsigned int &wood = woodTexture.texture;
 
 	// laugh face texture
-	Texture laughFaceTexture("texture/awesomeface.png", GL_RGBA);
+	Texture laughFaceTexture("texture/awesomeface.png", GL_RGB, GL_RGBA);
 	unsigned int& laughFace = laughFaceTexture.texture;
 
 	// wood steel texture (also called diffuse map when used in lighting)
-	Texture woodSteelTexture("texture/container2.png", GL_RGBA);
+	Texture woodSteelTexture("texture/container2.png", GL_RGB, GL_RGBA);
 	unsigned int& woodSteel = woodSteelTexture.texture;
 
 	// wood steel specular map (used for lighting)
-	Texture woodSteelSpecularMap("texture/container2_specular.png", GL_RGBA);
+	Texture woodSteelSpecularMap("texture/container2_specular.png", GL_RGB, GL_RGBA);
 	unsigned int& woodSteelSpecMap = woodSteelSpecularMap.texture;
 
 	// matrix emission map (glowing effect on objects)
-	Texture matrix("texture/matrix.jpg", GL_RGB);
+	Texture matrix("texture/matrix.jpg", GL_RGB, GL_RGB);
 	unsigned int& matrixEmissionMap = matrix.texture;
 
 	// brickwall texture
-	Texture brickWallTexture("texture/brickwall.jpg", GL_RGB);
+	Texture brickWallTexture("texture/brickwall.jpg", GL_RGB, GL_RGB);
 	unsigned int& brickWall = brickWallTexture.texture;
+
+	// grass texture
+	Texture grassTexture("texture/grass.png", GL_RGBA, GL_RGBA);
+	unsigned int& grass = grassTexture.texture;
+
+	// window texture
+	Texture windowTexture("texture/blending_transparent_window.png", GL_RGBA, GL_RGBA);
+	unsigned int& redWindow = windowTexture.texture;
 
 	// set texture warp/filter options
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
@@ -229,11 +247,14 @@ int main()
 	glBindTexture(GL_TEXTURE_2D, matrixEmissionMap);
 	glActiveTexture(GL_TEXTURE5);
 	glBindTexture(GL_TEXTURE_2D, brickWall);
-
+	glActiveTexture(GL_TEXTURE6);
+	glBindTexture(GL_TEXTURE_2D, grass);
+	glActiveTexture(GL_TEXTURE7);
+	glBindTexture(GL_TEXTURE_2D, redWindow);
 
 
 	// creating shaders and shader program
-	Shader plainShaderObj("VertexShader.glsl", "FragmentShader.glsl");
+	Shader defaultShader("VertexShaderDefault.glsl", "FragmentShaderDefault.glsl");
 
 	Shader lightShaderObj("VertexShaderLight.glsl", "FragmentShaderLight.glsl");
 
@@ -246,15 +267,15 @@ int main()
 	Shader stencilShader("VertexShaderStencil.glsl", "FragmentShaderStencil.glsl");
 
 	// initialize scene 1
-	vector<reference_wrapper<Shader>>* shaders = new vector<reference_wrapper<Shader>>({lightShaderObj, blinnLightShaderObj, lightSourceShaderObj, zBufferShader, stencilShader });
-	vector<GLuint*>* VAOs = new vector<GLuint*>({ &cubeVAO });
+	vector<reference_wrapper<Shader>>* shaders = new vector<reference_wrapper<Shader>>({lightShaderObj, blinnLightShaderObj, lightSourceShaderObj, zBufferShader, stencilShader, defaultShader });
+	vector<GLuint*>* VAOs = new vector<GLuint*>({ &cubeVAO, &planeVAO });
 	Scene1 *scene1 = new Scene1(camera, shaders, VAOs);
 
-
+	Scene2* scene2 = new Scene2(camera, shaders, VAOs);
 
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-
+	glEnable(GL_BLEND);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_STENCIL_TEST);
 
@@ -271,9 +292,13 @@ int main()
 		glClear(GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 		renderBackgroundWithColor();
 
-		scene1->render();
+		//scene1->drawPlane();
+		//scene1->render();
 		//scene1->renderDepthBuffer();
 		//scene1->renderOutlining();
+
+		scene2->drawPlane();
+		scene2->render();
 
 
 		glfwPollEvents();

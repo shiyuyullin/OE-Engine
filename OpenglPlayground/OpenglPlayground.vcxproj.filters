@@ -56,12 +56,15 @@
     <ClInclude Include="Scene2.h">
       <Filter>Source Files\Scenes</Filter>
     </ClInclude>
+    <ClInclude Include="plane.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="VertexShader.glsl">
+    <None Include="VertexShaderDefault.glsl">
       <Filter>Source Files\Shaders</Filter>
     </None>
-    <None Include="FragmentShader.glsl">
+    <None Include="FragmentShaderDefault.glsl">
       <Filter>Source Files\Shaders</Filter>
     </None>
     <None Include="VertexShaderLight.glsl">
@@ -88,7 +91,11 @@
     <None Include="VertexShaderZBuffer.glsl">
       <Filter>Source Files\Shaders</Filter>
     </None>
-    <None Include="VertexShaderStencil.glsl" />
-    <None Include="FragmentShaderStencil.glsl" />
+    <None Include="FragmentShaderStencil.glsl">
+      <Filter>Source Files\Shaders</Filter>
+    </None>
+    <None Include="VertexShaderStencil.glsl">
+      <Filter>Source Files\Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

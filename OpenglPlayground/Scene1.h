@@ -11,6 +11,7 @@ public:
 	void render();
 	void renderDepthBuffer();
 	void renderOutlining();
+	void drawPlane();
 private:
 	vector<GLuint*>* VAOs;
 	glm::vec3 pointLightPositions[4];
@@ -55,8 +56,32 @@ Scene1 ::~Scene1()
 {
 }
 
+void Scene1::drawPlane()
+{
+	glBindVertexArray(*VAOs->at(1));
+
+	Shader& defaultShader = shaders->at(5);
+	defaultShader.use();
+
+	glm::mat4 view;
+	view = camera->GetViewMatrix();
+	glm::mat4 projection;
+	projection = glm::perspective(glm::radians(camera->Zoom), 800.0f / 600.0f, 0.1f, 100.0f);
+	defaultShader.setMat4f("view", 1, false, view);
+	defaultShader.setMat4f("projection", 1, false, projection);
+
+	defaultShader.setInt("texture1", 5);
+
+	glm::mat4 model = glm::mat4(1.0f);
+	model = glm::translate(model, glm::vec3(0.0, -3.0, 0.0));
+	defaultShader.setMat4f("model", 1, false, model);
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+	glBindVertexArray(0);
+}
+
 void Scene1::renderDepthBuffer()
 {
+
 	Shader& zBufferShader = shaders->at(3);
 
 	glBindVertexArray(*VAOs->at(0));
@@ -361,4 +386,5 @@ void Scene1::render()
 	lightSourceShaderObj.setMat4f("projection", 1, false, projection);
 	glDrawArrays(GL_TRIANGLES, 0, 36);
 }
+
 
