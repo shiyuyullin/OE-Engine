@@ -20,4 +20,14 @@ Visualize Depth Buffer: (Object further away will appear brighter)\
 ![Recording 2024-12-16 191813](https://github.com/user-attachments/assets/6d4b4ee1-ebd8-4c75-a848-bb07268ee0e9)
 \
 \
+Blending and Transparency:\
+\
+![Recording 2024-12-20 171318](https://github.com/user-attachments/assets/3ad6a75e-b348-4b83-b11e-27330c4b05ac)
+\
+\
+Object outlining with Stencil test/buffer:\
+![Recording 2024-12-20 171409](https://github.com/user-attachments/assets/e50aafab-58b2-4427-b341-154363f83f3e)
+\
+\
+
 First person camera to explore the scene :)
