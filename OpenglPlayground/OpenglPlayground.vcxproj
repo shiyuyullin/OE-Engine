@@ -151,11 +151,13 @@
     <None Include="FragmentShaderBlinnLight.glsl" />
     <None Include="FragmentShaderLight.glsl" />
     <None Include="FragmentShaderLightSource.glsl" />
+    <None Include="FragmentShaderStencil.glsl" />
     <None Include="FragmentShaderZBuffer.glsl" />
     <None Include="VertexShader.glsl" />
     <None Include="VertexShaderBlinnLight.glsl" />
     <None Include="VertexShaderLight.glsl" />
     <None Include="VertexShaderLightSource.glsl" />
+    <None Include="VertexShaderStencil.glsl" />
     <None Include="VertexShaderZBuffer.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

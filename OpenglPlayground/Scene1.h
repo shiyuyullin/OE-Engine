@@ -10,6 +10,7 @@ public:
 	~Scene1();
 	void render();
 	void renderDepthBuffer();
+	void renderOutlining();
 private:
 	vector<GLuint*>* VAOs;
 	glm::vec3 pointLightPositions[4];
@@ -79,6 +80,61 @@ void Scene1::renderDepthBuffer()
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 	}
 }
+
+void Scene1::renderOutlining()
+{
+	float time = glfwGetTime();
+
+	Shader& zBufferShader = shaders->at(3);
+	Shader& stencilShader = shaders->at(4);
+
+	glBindVertexArray(*VAOs->at(0));
+
+	// only if the tests pass, we update buffer
+	glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+
+	// all fragments will pass stencil test
+	glStencilFunc(GL_ALWAYS, 1, 0xFF);
+	glStencilMask(0xFF);
+	zBufferShader.use();
+	glm::mat4 view;
+	view = camera->GetViewMatrix();
+	glm::mat4 projection;
+	projection = glm::perspective(glm::radians(camera->Zoom), 800.0f / 600.0f, 0.1f, 100.0f);
+	zBufferShader.setMat4f("view", 1, false, view);
+	zBufferShader.setMat4f("projection", 1, false, projection);
+	for (int i = 0; i < 10; i++)
+	{
+		glm::mat4 model = glm::mat4(1.0f);
+		model = glm::translate(model, cubePositions[i]);
+		float angle = 20.0f * i;
+		model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+		zBufferShader.setMat4f("model", 1, false, model);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+	}
+
+	glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+	glStencilMask(0x00);
+	glDisable(GL_DEPTH_TEST);
+	stencilShader.use();
+	stencilShader.setMat4f("view", 1, false, view);
+	stencilShader.setMat4f("projection", 1, false, projection);
+	for (int i = 0; i < 10; i++)
+	{
+		glm::mat4 model = glm::mat4(1.0f);
+		model = glm::translate(model, cubePositions[i]);
+		float angle = 20.0f * i;
+		model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+		model = glm::scale(model, glm::vec3(1.02f, 1.02f, 1.02f));
+		stencilShader.setMat4f("model", 1, false, model);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+	}
+	glStencilMask(0xFF);
+	glStencilFunc(GL_ALWAYS, 1, 0xFF);
+	glEnable(GL_DEPTH_TEST);
+}
+
+
 
 void Scene1::render()
 {

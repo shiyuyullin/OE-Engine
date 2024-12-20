@@ -88,5 +88,7 @@
     <None Include="VertexShaderZBuffer.glsl">
       <Filter>Source Files\Shaders</Filter>
     </None>
+    <None Include="VertexShaderStencil.glsl" />
+    <None Include="FragmentShaderStencil.glsl" />
   </ItemGroup>
 </Project>

@@ -243,9 +243,10 @@ int main()
 
 	Shader zBufferShader("VertexShaderZBuffer.glsl", "FragmentShaderZBuffer.glsl");
 
+	Shader stencilShader("VertexShaderStencil.glsl", "FragmentShaderStencil.glsl");
 
 	// initialize scene 1
-	vector<reference_wrapper<Shader>>* shaders = new vector<reference_wrapper<Shader>>({lightShaderObj, blinnLightShaderObj, lightSourceShaderObj, zBufferShader});
+	vector<reference_wrapper<Shader>>* shaders = new vector<reference_wrapper<Shader>>({lightShaderObj, blinnLightShaderObj, lightSourceShaderObj, zBufferShader, stencilShader });
 	vector<GLuint*>* VAOs = new vector<GLuint*>({ &cubeVAO });
 	Scene1 *scene1 = new Scene1(camera, shaders, VAOs);
 
@@ -255,6 +256,7 @@ int main()
 
 
 	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_STENCIL_TEST);
 
 	// main render loop
 	while (!glfwWindowShouldClose(window))
@@ -266,11 +268,12 @@ int main()
 		lastFrame = currentFrame;
 
 		processInput(window);
-		glClear(GL_DEPTH_BUFFER_BIT);
+		glClear(GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 		renderBackgroundWithColor();
 
-		scene1->render();
+		//scene1->render();
 		//scene1->renderDepthBuffer();
+		scene1->renderOutlining();
 
 
 		glfwPollEvents();
