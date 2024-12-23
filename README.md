@@ -1,4 +1,3 @@
-OpenGL Playgroud is the playground for me to learn and play with OpenGL. \
 \
 Transformation, Texture, Material:\
 \
