@@ -141,10 +141,9 @@ int main()
 	glfwSetScrollCallback(window, scroll_callback);
 
 	// creating vertex array object
-	unsigned int laughFaceCubeVAO;
+	unsigned int laughFaceCubeVAO, laughFaceCubeVBO;
 	glGenVertexArrays(1, &laughFaceCubeVAO);
 	// creating vertex buffer
-	unsigned int laughFaceCubeVBO;
 	glGenBuffers(1, &laughFaceCubeVBO);
 	glBindVertexArray(laughFaceCubeVAO);
 	glBindBuffer(GL_ARRAY_BUFFER, laughFaceCubeVBO);
@@ -154,8 +153,6 @@ int main()
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
-
-	// unbind VAO, VBO
 	glBindVertexArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
@@ -171,8 +168,6 @@ int main()
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
 	glEnableVertexAttribArray(2);
-
-	// unbind VAO, VBO
 	glBindVertexArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
@@ -183,6 +178,23 @@ int main()
 	glBindVertexArray(planeVAO);
 	glBindBuffer(GL_ARRAY_BUFFER, planeVBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(planeVertices), planeVertices, GL_STATIC_DRAW);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+	glEnableVertexAttribArray(2);
+	glBindVertexArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+
+	// cube with vertices specified counter clockwise
+	unsigned int cubeVAOccw, cubeVBOccw;
+	glGenVertexArrays(1, &cubeVAOccw);
+	glGenBuffers(1, &cubeVBOccw);
+	glBindVertexArray(cubeVAOccw);
+	glBindBuffer(GL_ARRAY_BUFFER, cubeVBOccw);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVerticesCCW), cubeVerticesCCW, GL_STATIC_DRAW);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
@@ -268,7 +280,7 @@ int main()
 
 	// initialize scene 1
 	vector<reference_wrapper<Shader>>* shaders = new vector<reference_wrapper<Shader>>({lightShaderObj, blinnLightShaderObj, lightSourceShaderObj, zBufferShader, stencilShader, defaultShader });
-	vector<GLuint*>* VAOs = new vector<GLuint*>({ &cubeVAO, &planeVAO });
+	vector<GLuint*>* VAOs = new vector<GLuint*>({ &cubeVAO, &planeVAO, &cubeVAOccw });
 	Scene1 *scene1 = new Scene1(camera, shaders, VAOs);
 
 	Scene2* scene2 = new Scene2(camera, shaders, VAOs);
@@ -278,6 +290,9 @@ int main()
 	glEnable(GL_BLEND);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_STENCIL_TEST);
+	// opengl by default cull back faces (vertices clockwise)
+	//glEnable(GL_CULL_FACE);
+
 
 	// main render loop
 	while (!glfwWindowShouldClose(window))
@@ -293,12 +308,12 @@ int main()
 		renderBackgroundWithColor();
 
 		//scene1->drawPlane();
-		//scene1->render();
+		scene1->render();
 		//scene1->renderDepthBuffer();
-		scene1->renderOutlining();
+		//scene1->renderOutlining();
 
-		//scene2->drawPlane();
-		//scene2->render();
+		/*scene2->drawPlane();
+		scene2->render();*/
 
 
 		glfwPollEvents();
