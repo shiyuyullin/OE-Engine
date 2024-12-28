@@ -15,6 +15,7 @@
 #include "plane.h"
 #include "Scene1.h"
 #include "Scene2.h"
+#include "quad.h"
 
 using namespace std;
 
@@ -108,8 +109,8 @@ int main()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-
 	GLFWwindow* window = glfwCreateWindow(800, 600, "Playground", NULL, NULL);
+	
 
 	if (window == NULL)
 	{
@@ -139,6 +140,42 @@ int main()
 
 	glfwSetCursorPosCallback(window, mouse_callback);
 	glfwSetScrollCallback(window, scroll_callback);
+
+	unsigned int fbo;
+	glGenFramebuffers(1, &fbo);
+	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+	// create an attachement to the framebuffer, here I use texture but it could be a renderbuffer
+	unsigned int textureColorbuffer;
+	glGenTextures(1, &textureColorbuffer);
+	glBindTexture(GL_TEXTURE_2D, textureColorbuffer);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 800, 600, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	// attach to framebuffer
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureColorbuffer, 0);
+
+	// create renderbuffer for storing depth and stencil values
+	unsigned int rbo;
+	glGenRenderbuffers(1, &rbo);
+	glBindRenderbuffer(GL_RENDERBUFFER, rbo);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, 800, 600);
+	glBindRenderbuffer(GL_RENDERBUFFER, 0);
+	// attach to framebuffer
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
+
+	// check if framebuffer is complete
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+	{
+		cout << "ERROR::Framebuffer not complete" << endl;
+	}
+	else
+	{
+		cout << "Framebuffer is complete" << endl;
+	}
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
 
 	// creating vertex array object
 	unsigned int laughFaceCubeVAO, laughFaceCubeVBO;
@@ -204,6 +241,23 @@ int main()
 	glBindVertexArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
+	// quad which is just the size of the window
+	unsigned int quadVAO, quadVBO;
+	glGenVertexArrays(1, &quadVAO);
+	glGenBuffers(1, &quadVBO);
+	glBindVertexArray(quadVAO);
+	glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(quad), quad, GL_STATIC_DRAW);
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+	glEnableVertexAttribArray(1);
+	glBindVertexArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+
+
+
 	// let stb flip y axis when loading the image, usually the image's (0,0) is at top of y axis
 	stbi_set_flip_vertically_on_load(true);
 
@@ -263,6 +317,8 @@ int main()
 	glBindTexture(GL_TEXTURE_2D, grass);
 	glActiveTexture(GL_TEXTURE7);
 	glBindTexture(GL_TEXTURE_2D, redWindow);
+	glActiveTexture(GL_TEXTURE8);
+	glBindTexture(GL_TEXTURE_2D, textureColorbuffer);
 
 
 	// creating shaders and shader program
@@ -278,11 +334,14 @@ int main()
 
 	Shader stencilShader("VertexShaderStencil.glsl", "FragmentShaderStencil.glsl");
 
+	Shader ppInversionShader("VertexShaderPp.glsl", "FragmentShaderPpInversion.glsl");
+
+	Shader ppGragscaleShader("VertexShaderPp.glsl", "FragmentShaderPpGrayscale.glsl");
+
 	// initialize scene 1
 	vector<reference_wrapper<Shader>>* shaders = new vector<reference_wrapper<Shader>>({lightShaderObj, blinnLightShaderObj, lightSourceShaderObj, zBufferShader, stencilShader, defaultShader });
 	vector<GLuint*>* VAOs = new vector<GLuint*>({ &cubeVAO, &planeVAO, &cubeVAOccw });
 	Scene1 *scene1 = new Scene1(camera, shaders, VAOs);
-
 	Scene2* scene2 = new Scene2(camera, shaders, VAOs);
 
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -304,20 +363,34 @@ int main()
 		lastFrame = currentFrame;
 
 		processInput(window);
+		
+		glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 		glClear(GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 		renderBackgroundWithColor();
-
+		// rendering
 		//scene1->drawPlane();
 		scene1->render();
 		//scene1->renderDepthBuffer();
 		//scene1->renderOutlining();
-
 		/*scene2->drawPlane();
 		scene2->render();*/
 
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glClear(GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+		renderBackgroundWithColor();
+		//ppInversionShader.use();
+		//ppGragscaleShader.use();
+		glBindVertexArray(quadVAO);
+		ppInversionShader.setInt("screenTexture", 8);
+		glDrawArrays(GL_TRIANGLES, 0, 6);
+
+		scene1->render();
+
+
+		glfwSwapBuffers(window);
 
 		glfwPollEvents();
-		glfwSwapBuffers(window);
+
 		
 	}
 

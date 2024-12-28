@@ -59,6 +59,12 @@
     <ClInclude Include="plane.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="quad.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="VertexShaderDefault.glsl">
@@ -97,5 +103,12 @@
     <None Include="VertexShaderStencil.glsl">
       <Filter>Source Files\Shaders</Filter>
     </None>
+    <None Include="FragmentShaderPpInversion.glsl">
+      <Filter>Source Files\Shaders</Filter>
+    </None>
+    <None Include="VertexShaderPp.glsl">
+      <Filter>Source Files\Shaders</Filter>
+    </None>
+    <None Include="FragmentShaderPpGrayscale.glsl" />
   </ItemGroup>
 </Project>
