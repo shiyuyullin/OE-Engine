@@ -1,5 +1,9 @@
 #pragma once
 
+#include <vector>
+#include <string>
+
+
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
@@ -39,3 +43,13 @@ void Utils::drawPlane(const glm::vec3& position, const GLuint& planeVAO, Shader&
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 	glBindVertexArray(0);
 }
+
+extern vector<string> faces
+{
+	"texture/skybox/right.jpg",
+	"texture/skybox/left.jpg",
+	"texture/skybox/top.jpg",
+	"texture/skybox/bottom.jpg",
+	"texture/skybox/front.jpg",
+	"texture/skybox/back.jpg"
+};

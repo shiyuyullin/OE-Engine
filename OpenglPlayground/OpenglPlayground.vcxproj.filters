@@ -65,6 +65,9 @@
     <ClInclude Include="Utils.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="Cubemap.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="VertexShaderDefault.glsl">
@@ -112,5 +115,7 @@
     <None Include="FragmentShaderPpGrayscale.glsl">
       <Filter>Source Files\Shaders</Filter>
     </None>
+    <None Include="VertexShaderSkybox.glsl" />
+    <None Include="FragmentShaderSkybox.glsl" />
   </ItemGroup>
 </Project>

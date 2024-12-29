@@ -139,6 +139,7 @@
   <ItemGroup>
     <ClInclude Include="Camera.h" />
     <ClInclude Include="cube.h" />
+    <ClInclude Include="Cubemap.h" />
     <ClInclude Include="plane.h" />
     <ClInclude Include="quad.h" />
     <ClInclude Include="Scene.h" />
@@ -156,6 +157,7 @@
     <None Include="FragmentShaderLightSource.glsl" />
     <None Include="FragmentShaderPpGrayscale.glsl" />
     <None Include="FragmentShaderPpInversion.glsl" />
+    <None Include="FragmentShaderSkybox.glsl" />
     <None Include="FragmentShaderStencil.glsl" />
     <None Include="FragmentShaderZBuffer.glsl" />
     <None Include="VertexShaderDefault.glsl" />
@@ -163,6 +165,7 @@
     <None Include="VertexShaderLight.glsl" />
     <None Include="VertexShaderLightSource.glsl" />
     <None Include="VertexShaderPp.glsl" />
+    <None Include="VertexShaderSkybox.glsl" />
     <None Include="VertexShaderStencil.glsl" />
     <None Include="VertexShaderZBuffer.glsl" />
   </ItemGroup>

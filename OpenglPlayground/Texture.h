@@ -19,6 +19,8 @@ public:
 
 Texture::Texture(string path, GLint internalFormat, GLenum format)
 {
+	// let stb flip y axis when loading the image, usually the image's (0,0) is at top of y axis
+	stbi_set_flip_vertically_on_load(true);
 	glGenTextures(1, &texture);
 	glBindTexture(GL_TEXTURE_2D, texture);
 	int width, height, nrChannels;

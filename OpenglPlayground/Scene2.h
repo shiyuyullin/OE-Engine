@@ -35,7 +35,7 @@ Scene2::Scene2(Camera* camera, vector<reference_wrapper<Shader>>* shaders, vecto
 	// setting position for transparent objects
 	transparentObjPos[0] = glm::vec3(0.0, -1.0, 0.0);
 	transparentObjPos[1] = glm::vec3(0.0, -1.0, 1.0);
-	cout << "Scene 2 initialized successfully" << endl;
+	cout << "Scene #2 initialized" << endl;
 }
 
 Scene2::~Scene2()

@@ -16,6 +16,7 @@
 #include "Scene1.h"
 #include "Scene2.h"
 #include "quad.h"
+#include "Cubemap.h"
 
 using namespace std;
 
@@ -255,11 +256,17 @@ int main()
 	glBindVertexArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-
-
-
-	// let stb flip y axis when loading the image, usually the image's (0,0) is at top of y axis
-	stbi_set_flip_vertically_on_load(true);
+	// skybox
+	unsigned int skyboxVAO, skyboxVBO;
+	glGenVertexArrays(1, &skyboxVAO);
+	glBindVertexArray(skyboxVAO);
+	glGenBuffers(1, &skyboxVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, skyboxVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(skyboxCube), skyboxCube, GL_STATIC_DRAW);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+	glBindVertexArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	// creating wood texture
 	Texture woodTexture("texture/container.jpg", GL_RGB, GL_RGB);
@@ -294,6 +301,10 @@ int main()
 	Texture windowTexture("texture/blending_transparent_window.png", GL_RGBA, GL_RGBA);
 	unsigned int& redWindow = windowTexture.texture;
 
+	// cubmap
+	Cubemap skyboxTexture(faces);
+	unsigned int& skybox = skyboxTexture.texture;
+
 	// set texture warp/filter options
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -319,6 +330,8 @@ int main()
 	glBindTexture(GL_TEXTURE_2D, redWindow);
 	glActiveTexture(GL_TEXTURE8);
 	glBindTexture(GL_TEXTURE_2D, textureColorbuffer);
+	glActiveTexture(GL_TEXTURE9);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, skybox);
 
 
 	// creating shaders and shader program
@@ -337,6 +350,8 @@ int main()
 	Shader ppInversionShader("VertexShaderPp.glsl", "FragmentShaderPpInversion.glsl");
 
 	Shader ppGragscaleShader("VertexShaderPp.glsl", "FragmentShaderPpGrayscale.glsl");
+
+	Shader skyboxShader("VertexShaderSkybox.glsl", "FragmentShaderSkybox.glsl");
 
 	// initialize scene 1
 	vector<reference_wrapper<Shader>>* shaders = new vector<reference_wrapper<Shader>>({lightShaderObj, blinnLightShaderObj, lightSourceShaderObj, zBufferShader, stencilShader, defaultShader });
@@ -363,34 +378,51 @@ int main()
 		lastFrame = currentFrame;
 
 		processInput(window);
+
+		// disable writting to depth buffer
+		glClear(GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+
 		
-		glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-		glClear(GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-		renderBackgroundWithColor();
-		// rendering
-		//scene1->drawPlane();
+		//glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+		//glClear(GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+		//renderBackgroundWithColor();
+		//// rendering
+		////scene1->drawPlane();
 		scene1->render();
-		//scene1->renderDepthBuffer();
-		//scene1->renderOutlining();
-		/*scene2->drawPlane();
-		scene2->render();*/
+		////scene1->renderDepthBuffer();
+		////scene1->renderOutlining();
+		///*scene2->drawPlane();
+		//scene2->render();*/
 
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		glClear(GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-		renderBackgroundWithColor();
-		ppInversionShader.use();
-		//ppGragscaleShader.use();
-		glBindVertexArray(quadVAO);
-		ppInversionShader.setInt("screenTexture", 8);
-		glDrawArrays(GL_TRIANGLES, 0, 6);
+		//glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		//glClear(GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+		//renderBackgroundWithColor();
+		//ppInversionShader.use();
+		////ppGragscaleShader.use();
+		//glBindVertexArray(quadVAO);
+		//ppInversionShader.setInt("screenTexture", 8);
+		//glDrawArrays(GL_TRIANGLES, 0, 6);
 
 
-		//scene1->drawPlane();
-		scene1->render();
-		//scene1->renderDepthBuffer();
-		//scene1->renderOutlining();
-		/*scene2->drawPlane();
-		scene2->render();*/
+		////scene1->drawPlane();
+		//scene1->render();
+		////scene1->renderDepthBuffer();
+		////scene1->renderOutlining();
+		///*scene2->drawPlane();
+		//scene2->render();*/
+
+		glDepthFunc(GL_LEQUAL);
+		glDepthMask(GL_FALSE);
+		skyboxShader.use();
+		glBindVertexArray(skyboxVAO);
+		skyboxShader.setInt("skybox", 9);
+		glm::mat4 view = glm::mat3(camera->GetViewMatrix());
+		glm::mat4 projection;
+		projection = glm::perspective(glm::radians(camera->Zoom), 800.0f / 600.0f, 0.1f, 100.0f);
+		skyboxShader.setMat4f("projection", 1, false, projection);
+		skyboxShader.setMat4f("view", 1, false, view);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+		glDepthMask(GL_TRUE);
 
 		glfwSwapBuffers(window);
 
