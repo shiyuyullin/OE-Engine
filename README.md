@@ -29,5 +29,14 @@ Object outlining with Stencil test/buffer:\
 ![Recording 2024-12-20 171409](https://github.com/user-attachments/assets/e50aafab-58b2-4427-b341-154363f83f3e)
 \
 \
+Framebuffer + postprocessing(top right corner): \
+\
+Color Inversion
+![Recording 2024-12-28 204741](https://github.com/user-attachments/assets/3a6a3da8-0139-4008-870c-96a6cf74720b)
+\
+Grayscale
+![Recording 2024-12-28 205203](https://github.com/user-attachments/assets/9779cb66-8e7f-4308-aa26-1d6f74f4ad07)
+\
+\
 
 First person camera to explore the scene :)
