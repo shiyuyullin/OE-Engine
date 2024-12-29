@@ -32,9 +32,11 @@ Object outlining with Stencil test/buffer:\
 Framebuffer + postprocessing(top right corner): \
 \
 Color Inversion
+\
 ![Recording 2024-12-28 204741](https://github.com/user-attachments/assets/3a6a3da8-0139-4008-870c-96a6cf74720b)
 \
 Grayscale
+\
 ![Recording 2024-12-28 205203](https://github.com/user-attachments/assets/9779cb66-8e7f-4308-aa26-1d6f74f4ad07)
 \
 \
