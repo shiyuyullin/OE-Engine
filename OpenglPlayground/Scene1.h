@@ -58,25 +58,7 @@ Scene1 ::~Scene1()
 
 void Scene1::drawPlane()
 {
-	glBindVertexArray(*VAOs->at(1));
-
-	Shader& defaultShader = shaders->at(5);
-	defaultShader.use();
-
-	glm::mat4 view;
-	view = camera->GetViewMatrix();
-	glm::mat4 projection;
-	projection = glm::perspective(glm::radians(camera->Zoom), 800.0f / 600.0f, 0.1f, 100.0f);
-	defaultShader.setMat4f("view", 1, false, view);
-	defaultShader.setMat4f("projection", 1, false, projection);
-
-	defaultShader.setInt("texture1", 5);
-
-	glm::mat4 model = glm::mat4(1.0f);
-	model = glm::translate(model, glm::vec3(0.0, -3.0, 0.0));
-	defaultShader.setMat4f("model", 1, false, model);
-	glDrawArrays(GL_TRIANGLES, 0, 6);
-	glBindVertexArray(0);
+	Utils::drawPlane(glm::vec3(0.0, -3, 0.0), *VAOs->at(1), shaders->at(5), camera);
 }
 
 void Scene1::renderDepthBuffer()

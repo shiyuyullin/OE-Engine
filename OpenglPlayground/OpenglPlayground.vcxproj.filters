@@ -109,6 +109,8 @@
     <None Include="VertexShaderPp.glsl">
       <Filter>Source Files\Shaders</Filter>
     </None>
-    <None Include="FragmentShaderPpGrayscale.glsl" />
+    <None Include="FragmentShaderPpGrayscale.glsl">
+      <Filter>Source Files\Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

@@ -378,14 +378,19 @@ int main()
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glClear(GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 		renderBackgroundWithColor();
-		//ppInversionShader.use();
+		ppInversionShader.use();
 		//ppGragscaleShader.use();
 		glBindVertexArray(quadVAO);
 		ppInversionShader.setInt("screenTexture", 8);
 		glDrawArrays(GL_TRIANGLES, 0, 6);
 
-		scene1->render();
 
+		//scene1->drawPlane();
+		scene1->render();
+		//scene1->renderDepthBuffer();
+		//scene1->renderOutlining();
+		/*scene2->drawPlane();
+		scene2->render();*/
 
 		glfwSwapBuffers(window);
 

@@ -15,6 +15,7 @@
 
 #include "Camera.h"
 #include "Shader.h"
+#include "Utils.h"
 
 
 class Scene
