@@ -411,18 +411,7 @@ int main()
 		///*scene2->drawPlane();
 		//scene2->render();*/
 
-		glDepthFunc(GL_LEQUAL);
-		glDepthMask(GL_FALSE);
-		skyboxShader.use();
-		glBindVertexArray(skyboxVAO);
-		skyboxShader.setInt("skybox", 9);
-		glm::mat4 view = glm::mat3(camera->GetViewMatrix());
-		glm::mat4 projection;
-		projection = glm::perspective(glm::radians(camera->Zoom), 800.0f / 600.0f, 0.1f, 100.0f);
-		skyboxShader.setMat4f("projection", 1, false, projection);
-		skyboxShader.setMat4f("view", 1, false, view);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
-		glDepthMask(GL_TRUE);
+		Utils::drawSkybox(9, skyboxVAO, skyboxShader, camera);
 
 		glfwSwapBuffers(window);
 
