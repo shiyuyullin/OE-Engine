@@ -13,7 +13,6 @@ Lighting (Phong Model): \
 ![Recording 2024-12-11 232846](https://github.com/user-attachments/assets/dcc53d3a-503a-4de6-a3f5-d9fc626145f2)
 \
 \
-\
 Visualize Depth Buffer: (Object further away will appear brighter)\
 \
 ![Recording 2024-12-16 191813](https://github.com/user-attachments/assets/6d4b4ee1-ebd8-4c75-a848-bb07268ee0e9)
@@ -40,5 +39,9 @@ Grayscale
 ![Recording 2024-12-28 205203](https://github.com/user-attachments/assets/9779cb66-8e7f-4308-aa26-1d6f74f4ad07)
 \
 \
-
+Cubemap and Skybox for the scene:\
+\
+![Recording 2025-01-02 210239](https://github.com/user-attachments/assets/ab608014-e2fc-44da-aa1b-eae22a22b814)
+\
+\
 First person camera to explore the scene :)
