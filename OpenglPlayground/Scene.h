@@ -46,7 +46,7 @@ Scene::Scene(Camera* camera, vector<reference_wrapper<Shader>>* shaders)
 
 Scene::~Scene()
 {
-	delete camera;
+	camera = nullptr;
 	shaders = nullptr;
 }
 

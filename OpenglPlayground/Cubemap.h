@@ -48,5 +48,13 @@ Cubemap::Cubemap(vector<string> faces)
 
 Cubemap::~Cubemap()
 {
-
+	glDeleteTextures(1, &this->texture);
+	if (!glIsTexture(this->texture))
+	{
+		cout << "Texture " << this->texture << " is deleted." << endl;
+	}
+	else
+	{
+		cout << "Texture " << this->texture << " is still valid." << endl;
+	}
 }

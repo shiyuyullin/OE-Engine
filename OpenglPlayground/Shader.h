@@ -168,6 +168,17 @@ void Shader::setMat4f(const string& name, int count, bool transpose, glm::mat4 t
 
 Shader::~Shader()
 {
+	glDeleteProgram(this->ID);
+	int success;
+	glGetProgramiv(this->ID, GL_DELETE_STATUS, &success);
+	if (!success)
+	{
+		cout << "Shader program " << this->ID << " deletion unsuccessful." << endl;
+	}
+	else
+	{
+		cout << "Shader program " << this->ID << " deleted." << endl;
+	}
 
 }
 

@@ -1,4 +1,5 @@
 #include <iostream>
+#include <algorithm>
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -20,16 +21,10 @@
 
 using namespace std;
 
-
-Camera* camera = new Camera();
+Camera camera{};
 
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
-
-void framebuffer_size_callback(GLFWwindow* window, int width, int height)
-{
-	glViewport(0, 0, width, height);
-}
 
 // When processing input, using delta time to make sure that frame rate won't impact the 
 // distance of movement
@@ -44,19 +39,19 @@ void processInput(GLFWwindow* window)
 	}
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 	{
-		camera->ProcessKeyboard(FORWARD, deltaTime);
+		camera.ProcessKeyboard(FORWARD, deltaTime);
 	}
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
 	{
-		camera->ProcessKeyboard(BACKWARD, deltaTime);
+		camera.ProcessKeyboard(BACKWARD, deltaTime);
 	}
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
 	{
-		camera->ProcessKeyboard(LEFT, deltaTime);
+		camera.ProcessKeyboard(LEFT, deltaTime);
 	}
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
 	{
-		camera->ProcessKeyboard(RIGHT, deltaTime);
+		camera.ProcessKeyboard(RIGHT, deltaTime);
 	}
 }
 
@@ -84,7 +79,7 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 	float yoffset = lastY - ypos; // ypos - lastY -> reversed, mouse up -> camera down, mouse down -> camera up
 	lastX = xpos;
 	lastY = ypos;
-	camera->ProcessMouseMovement(xoffset, yoffset);
+	camera.ProcessMouseMovement(xoffset, yoffset);
 }
 
 // ----
@@ -92,15 +87,9 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 // wheel movement ----
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
-	camera->ProcessMouseScroll(yoffset);
+	camera.ProcessMouseScroll(yoffset);
 }
 // ----
-
-void renderBackgroundWithColor()
-{
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT);
-}
 
 int main()
 {
@@ -112,7 +101,6 @@ int main()
 
 	GLFWwindow* window = glfwCreateWindow(800, 600, "Playground", NULL, NULL);
 	
-
 	if (window == NULL)
 	{
 		cout << "failed to create glfw window" << endl;
@@ -131,7 +119,7 @@ int main()
 	glViewport(0, 0, 800, 600);
 
 	// resizing window & resize viewport
-	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+	glfwSetFramebufferSizeCallback(window, Utils::framebuffer_size_callback);
 
 	// limit frame rate
 	//glfwSwapInterval(1);
@@ -356,8 +344,8 @@ int main()
 	// initialize scene 1
 	vector<reference_wrapper<Shader>>* shaders = new vector<reference_wrapper<Shader>>({lightShaderObj, blinnLightShaderObj, lightSourceShaderObj, zBufferShader, stencilShader, defaultShader });
 	vector<GLuint*>* VAOs = new vector<GLuint*>({ &cubeVAO, &planeVAO, &cubeVAOccw });
-	Scene1 *scene1 = new Scene1(camera, shaders, VAOs);
-	Scene2* scene2 = new Scene2(camera, shaders, VAOs);
+	Scene1 *scene1 = new Scene1(&camera, shaders, VAOs);
+	Scene2 *scene2 = new Scene2(&camera, shaders, VAOs);
 
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
@@ -384,19 +372,17 @@ int main()
 
 		
 		//glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-		//glClear(GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-		//renderBackgroundWithColor();
+		//glClear(GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 		//// rendering
 		////scene1->drawPlane();
-		scene1->render();
+		//scene1->render();
 		////scene1->renderDepthBuffer();
 		////scene1->renderOutlining();
 		///*scene2->drawPlane();
 		//scene2->render();*/
 
 		//glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		//glClear(GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-		//renderBackgroundWithColor();
+		//glClear(GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 		//ppInversionShader.use();
 		////ppGragscaleShader.use();
 		//glBindVertexArray(quadVAO);
@@ -411,16 +397,18 @@ int main()
 		///*scene2->drawPlane();
 		//scene2->render();*/
 
-		Utils::drawSkybox(9, skyboxVAO, skyboxShader, camera);
+		Utils::drawSkybox(9, skyboxVAO, skyboxShader, &camera);
 
 		glfwSwapBuffers(window);
 
 		glfwPollEvents();
 
-		
 	}
 
 	glfwTerminate();
+
+
+
 	return 0;
 
 

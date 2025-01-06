@@ -23,7 +23,16 @@ public:
 	static void drawPlane(const glm::vec3& position, const GLuint& planeVAO, Shader& shader,  Camera* camera);
 	// draw skybox
 	static void drawSkybox(unsigned int textureIndex, const GLuint& skyboxVAO, Shader& shader, Camera* camera);
+	// window resize callback
+	static void framebuffer_size_callback(GLFWwindow* window, int width, int height);
+	// setting background color
+	static void renderBackgroundWithColor(GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha);
 };
+
+void Utils::framebuffer_size_callback(GLFWwindow* window, int width, int height)
+{
+	glViewport(0, 0, width, height);
+}
 
 
 void Utils::drawPlane(const glm::vec3& position, const GLuint& planeVAO, Shader& shader, Camera* camera)
@@ -61,6 +70,11 @@ void Utils::drawSkybox(unsigned int textureIndex, const GLuint& skyboxVAO, Shade
 	glDrawArrays(GL_TRIANGLES, 0, 36);
 	glDepthMask(GL_TRUE);
 	glDepthFunc(GL_LESS);
+}
+
+void Utils::renderBackgroundWithColor(GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha)
+{
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 }
 
 extern vector<string> faces
