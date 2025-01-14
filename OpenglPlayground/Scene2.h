@@ -6,9 +6,7 @@
 class Scene2 : public Scene
 {
 public:
-	Scene2();
 	Scene2(Camera* camera, vector<reference_wrapper<Shader>>* shaders, vector<GLuint*>* VAOs);
-	~Scene2();
 	void drawPlane();
 	void render();
 
@@ -17,12 +15,6 @@ private:
 	vector<GLuint*>* VAOs;
 	glm::vec3 transparentObjPos[2];
 };
-
-
-Scene2::Scene2()
-{
-
-}
 
 Scene2::Scene2(Camera* camera, vector<reference_wrapper<Shader>>* shaders, vector<GLuint*>* VAOs) : Scene(camera, shaders)
 {
@@ -36,11 +28,6 @@ Scene2::Scene2(Camera* camera, vector<reference_wrapper<Shader>>* shaders, vecto
 	transparentObjPos[0] = glm::vec3(0.0, -1.0, 0.0);
 	transparentObjPos[1] = glm::vec3(0.0, -1.0, 1.0);
 	cout << "Scene #2 initialized" << endl;
-}
-
-Scene2::~Scene2()
-{
-
 }
 
 void Scene2::drawPlane()

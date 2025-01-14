@@ -16,6 +16,7 @@
 #include "plane.h"
 #include "Scene1.h"
 #include "Scene2.h"
+#include "Scene3.h"
 #include "quad.h"
 #include "Cubemap.h"
 
@@ -341,11 +342,17 @@ int main()
 
 	Shader skyboxShader("VertexShaderSkybox.glsl", "FragmentShaderSkybox.glsl");
 
+	Shader simpleDepthShader("VertexShaderDepth.glsl", "FragmentShaderDepth.glsl");
+
+	Shader shadowMappingShader("VertexShaderShadowMapping.glsl", "FragmentShaderShadowMapping.glsl");
+
 	// initialize scene 1
-	vector<reference_wrapper<Shader>>* shaders = new vector<reference_wrapper<Shader>>({lightShaderObj, blinnLightShaderObj, lightSourceShaderObj, zBufferShader, stencilShader, defaultShader });
+	vector<reference_wrapper<Shader>>* shaders = new vector<reference_wrapper<Shader>>({lightShaderObj, blinnLightShaderObj, 
+		lightSourceShaderObj, zBufferShader, stencilShader, defaultShader, simpleDepthShader, shadowMappingShader });
 	vector<GLuint*>* VAOs = new vector<GLuint*>({ &cubeVAO, &planeVAO, &cubeVAOccw });
 	Scene1 *scene1 = new Scene1(&camera, shaders, VAOs);
 	Scene2 *scene2 = new Scene2(&camera, shaders, VAOs);
+	Scene3* scene3 = new Scene3(&camera, shaders, VAOs);
 
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
@@ -397,7 +404,9 @@ int main()
 		///*scene2->drawPlane();
 		//scene2->render();*/
 
-		Utils::drawSkybox(9, skyboxVAO, skyboxShader, &camera);
+		//Utils::drawSkybox(9, skyboxVAO, skyboxShader, &camera);
+
+		scene3->render();
 
 		glfwSwapBuffers(window);
 

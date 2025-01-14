@@ -49,7 +49,7 @@ void Utils::drawPlane(const glm::vec3& position, const GLuint& planeVAO, Shader&
 	shader.setInt("texture1", 5);
 
 	glm::mat4 model = glm::mat4(1.0f);
-	model = glm::translate(model, glm::vec3(0.0, -1.5, 0.0));
+	model = glm::translate(model, position);
 	shader.setMat4f("model", 1, false, model);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 	glBindVertexArray(0);

@@ -5,9 +5,7 @@
 class Scene1 : public Scene
 {
 public:
-	Scene1();
 	Scene1(Camera* canera, vector<reference_wrapper<Shader>>* shaders, vector<GLuint*>* VAOs);
-	~Scene1();
 	void render();
 	void renderDepthBuffer();
 	void renderOutlining();
@@ -20,11 +18,6 @@ private:
 	float lightSourceMoveRange;
 	float lightSourceMoveSpeed;
 };
-
-Scene1::Scene1()
-{
-
-}
 
 Scene1::Scene1(Camera* camera, vector<reference_wrapper<Shader>>* shaders, vector<GLuint*>* VAOs) : Scene(camera, shaders)
 {
@@ -52,13 +45,9 @@ Scene1::Scene1(Camera* camera, vector<reference_wrapper<Shader>>* shaders, vecto
 	cout << "Scene #1 initialized" << endl;
 }
 
-Scene1 ::~Scene1()
-{
-}
-
 void Scene1::drawPlane()
 {
-	Utils::drawPlane(glm::vec3(0.0, -3, 0.0), *VAOs->at(1), shaders->at(5), camera);
+	Utils::drawPlane(glm::vec3(0.0, -5.0, 0.0), *VAOs->at(1), shaders->at(5), camera);
 }
 
 void Scene1::renderDepthBuffer()
