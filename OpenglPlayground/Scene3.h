@@ -2,6 +2,7 @@
 
 #include "Scene.h"
 
+// shadow mapping
 class Scene3 : public Scene
 {
 public:
@@ -10,9 +11,11 @@ public:
 private:
 	GLuint depthMapFBO;
 	GLuint depthMap;
-	const unsigned int SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
+	// increase the resolution of shadow map could make shadows softer
+	const unsigned int SHADOW_WIDTH = 2048, SHADOW_HEIGHT = 2048;
 	glm::mat4 lightProjectionMat;
 	glm::mat4 lightViewMat;
+	glm::vec3 lightPos;
 	vector<GLuint*>* VAOs;
 };
 
@@ -40,8 +43,9 @@ Scene3::Scene3(Camera* camera, vector<reference_wrapper<Shader>>* shaders, vecto
 		cout << "Scene3 Framebuffer complete." << endl;
 	}
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	lightPos = glm::vec3(0.0f, 2.0f, -1.0f);
 	lightProjectionMat = glm::ortho(-20.0f, 20.0f, -20.0f, 20.0f, 0.1f, 100.0f);
-	lightViewMat = glm::lookAt(glm::vec3(-2.0f, 2.0f, -1.0f),
+	lightViewMat = glm::lookAt(lightPos,
 		glm::vec3(0.0f, 0.0f, 0.0f),
 		glm::vec3(0.0f, 1.0f, 0.0f));
 	glActiveTexture(GL_TEXTURE10);
@@ -52,6 +56,13 @@ Scene3::Scene3(Camera* camera, vector<reference_wrapper<Shader>>* shaders, vecto
 
 void Scene3::render()
 {
+	float time = glfwGetTime();
+	// moving the light source along x-axis
+	lightPos.x = -2.0f + (4.0f * sin(0.3f * time));
+	lightViewMat = glm::lookAt(lightPos,
+		glm::vec3(0.0f, 0.0f, 0.0f),
+		glm::vec3(0.0f, 1.0f, 0.0f));
+
 	// render to shadow map
 	Shader& simpleDepthShader = shaders->at(6);
 	simpleDepthShader.use();
@@ -64,8 +75,15 @@ void Scene3::render()
 	simpleDepthShader.setMat4f("lightSpaceMatrix", 1, false, lightProjectionMat * lightViewMat);
 	simpleDepthShader.setMat4f("model", 1, false, modelMat);
 	glDrawArrays(GL_TRIANGLES, 0, 36);
+	modelMat = glm::mat4(1.0f);
+	modelMat = glm::translate(modelMat, glm::vec3(1.0f, 0.0f, 1.5f));
+	simpleDepthShader.setMat4f("model", 1, false, modelMat);
+	glDrawArrays(GL_TRIANGLES, 0, 36);
+	modelMat = glm::mat4(1.0f);
+	modelMat = glm::translate(modelMat, glm::vec3(-2.0f, 1.5f, 1.0f));
+	simpleDepthShader.setMat4f("model", 1, false, modelMat);
+	glDrawArrays(GL_TRIANGLES, 0, 36);
 	glBindVertexArray(0);
-	//Utils::drawPlane(glm::vec3(0.0, 0.0, 0.0), *VAOs->at(1), shaders->at(5), camera);
 	glBindVertexArray(*VAOs->at(1));
 	modelMat = glm::mat4(1.0f);
 	modelMat = glm::translate(modelMat, glm::vec3(0.0f, 0.0f, 0.0f));
@@ -92,6 +110,14 @@ void Scene3::render()
 	shadowMappingShader.setInt("shadowMap", 10);
 	shadowMappingShader.setVec3fv("lightPos", 1, glm::vec3(-2.0f, 2.0f, -1.0f));
 	shadowMappingShader.setVec3fv("viewPos", 1, camera->Position);
+	glDrawArrays(GL_TRIANGLES, 0, 36);
+	modelMat = glm::mat4(1.0f);
+	modelMat = glm::translate(modelMat, glm::vec3(1.0f, 0.0f, 1.5f));
+	shadowMappingShader.setMat4f("model", 1, false, modelMat);
+	glDrawArrays(GL_TRIANGLES, 0, 36);
+	modelMat = glm::mat4(1.0f);
+	modelMat = glm::translate(modelMat, glm::vec3(-2.0f, 1.5f, 1.0f));
+	shadowMappingShader.setMat4f("model", 1, false, modelMat);
 	glDrawArrays(GL_TRIANGLES, 0, 36);
 	glBindVertexArray(0);
 	glBindVertexArray(*VAOs->at(1));

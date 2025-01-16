@@ -124,9 +124,17 @@
     <None Include="VertexShaderSkybox.glsl">
       <Filter>Source Files\Shaders</Filter>
     </None>
-    <None Include="VertexShaderDepth.glsl" />
-    <None Include="FragmentShaderDepth.glsl" />
-    <None Include="VertexShaderShadowMapping.glsl" />
-    <None Include="FragmentShaderShadowMapping.glsl" />
+    <None Include="VertexShaderShadowMapping.glsl">
+      <Filter>Source Files\Shaders</Filter>
+    </None>
+    <None Include="FragmentShaderDepth.glsl">
+      <Filter>Source Files\Shaders</Filter>
+    </None>
+    <None Include="FragmentShaderShadowMapping.glsl">
+      <Filter>Source Files\Shaders</Filter>
+    </None>
+    <None Include="VertexShaderDepth.glsl">
+      <Filter>Source Files\Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>
