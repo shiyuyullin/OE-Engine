@@ -38,6 +38,9 @@ Grayscale
 \
 ![Recording 2024-12-28 205203](https://github.com/user-attachments/assets/9779cb66-8e7f-4308-aa26-1d6f74f4ad07)
 \
+Shadow Mapping! :
+\
+![Recording 2025-01-16 131542](https://github.com/user-attachments/assets/73f2841d-8a28-440e-a49d-130c95f626ab)
 \
 Cubemap and Skybox for the scene:\
 \
